@@ -6,6 +6,7 @@ from meerk40t.core.units import Length
 from meerk40t.gui.laserrender import DRAW_MODE_GUIDES
 from meerk40t.gui.scene.sceneconst import HITCHAIN_HIT, RESPONSE_CHAIN, RESPONSE_CONSUME
 from meerk40t.gui.scene.widget import Widget
+from meerk40t.gui.themes import contrasting_text_color
 
 _ = wx.GetTranslation
 
@@ -169,11 +170,16 @@ class GuideWidget(Widget):
         return result
 
     def set_colors(self):
-        self.color_units = self.scene.colors.color_guide
-        self.primary_guides_color = self.scene.colors.color_guide
-        self.secondary_guides_color = self.scene.colors.color_guide2
-        self.primary_guides_pen.SetColour(self.primary_guides_color)
-        self.secondary_guides_pen.SetColour(self.secondary_guides_color)
+        background = self.scene.colors.get("background")
+        self.primary_guides_color = contrasting_text_color(
+            self.scene.colors.get("guide"), background
+        )
+        self.secondary_guides_color = contrasting_text_color(
+            self.scene.colors.get("guide2"), background
+        )
+        self.color_units = self.primary_guides_color
+        self.primary_guides_pen.SetColour(self.scene.colors.color_guide)
+        self.secondary_guides_pen.SetColour(self.scene.colors.color_guide2)
         self.pen_magnets.SetColour(self.scene.colors.color_magnetline)
         self.pen_magnets.SetWidth(2)
 

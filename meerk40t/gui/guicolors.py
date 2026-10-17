@@ -53,11 +53,8 @@ default_color = {
 }
 
 # Laserology proposed the following values:
-def to_hex(col:wx.Colour):
-    def plain(num:int):
-        return hex(num)[2:4]
-    s = f"#{plain(col.red)}{plain(col.green)}{plain(col.blue)}{plain(col.alpha)}"
-    return s
+def to_hex(col: wx.Colour) -> str:
+    return f"#{col.red:02x}{col.green:02x}{col.blue:02x}{col.alpha:02x}"
 
 default_colors_dark= {
     "grid": "#6B6B6B",

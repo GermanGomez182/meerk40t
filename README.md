@@ -77,6 +77,11 @@ On macOS, new workspaces use a light drawing bed and gray surrounding canvas,
 including when macOS uses Dark Mode. Native controls still follow the system
 appearance. Saved workspace colors are preserved.
 
+Ruler labels choose a readable foreground when their configured color would
+blend into the canvas, including translucent colors. Readable custom label
+colors are kept, and this rendering adjustment does not rewrite saved colors.
+Start, Pause, and Stop labels also use contrasting colors in both appearances.
+
 To brighten an existing workspace, open **Preferences → Colors** and select
 **Reset Colors to brighter defaults** in Dark Mode, or **Reset Colors to Default**
 in Light Mode. Resetting replaces your custom workspace colors. Individual colors

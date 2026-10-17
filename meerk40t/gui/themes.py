@@ -3,6 +3,7 @@ Basic Module to provide infmoration about the GUI
 """
 from math import sqrt
 from platform import system
+from typing import Sequence
 
 import wx
 
@@ -35,6 +36,33 @@ def color_distance(c1: wx.Colour, c2: wx.Colour) -> bool:
 
 def inverted_color(c1: wx.Colour) -> wx.Colour:
     return wx.Colour(255 - c1.red, 255 - c1.green, 255 - c1.blue, c1.alpha)
+
+
+def _relative_luminance(channels: Sequence[float]) -> float:
+    linear = tuple(
+        value / 12.92 if value <= 0.04045 else ((value + 0.055) / 1.055) ** 2.4
+        for value in (channel / 255.0 for channel in channels)
+    )
+    return sum(value * weight for value, weight in zip(linear, (0.2126, 0.7152, 0.0722)))
+
+
+def contrasting_text_color(foreground: wx.Colour, background: wx.Colour) -> wx.Colour:
+    """Preserve readable text colors, otherwise choose opaque black or white."""
+    alpha = foreground.Alpha() / 255.0
+    effective = tuple(
+        alpha * foreground[index] + (1.0 - alpha) * background[index]
+        for index in range(3)
+    )
+    text_luminance = _relative_luminance(effective)
+    background_luminance = _relative_luminance(tuple(background[:3]))
+    contrast = (max(text_luminance, background_luminance) + 0.05) / (
+        min(text_luminance, background_luminance) + 0.05
+    )
+    if contrast >= 4.5:
+        return foreground
+    black_contrast = (background_luminance + 0.05) / 0.05
+    white_contrast = 1.05 / (background_luminance + 0.05)
+    return wx.BLACK if black_contrast >= white_contrast else wx.WHITE
 
 
 def is_a_bright_color(c1):
@@ -201,6 +229,11 @@ class Themes(Service):
         tp["stop_bg"] = wx.Colour(172, 29, 27)  # Casual red
         tp["stop_fg"] = wx.WHITE if self._dark else wx.BLACK
         tp["stop_fg_focus"] = wx.BLACK if self._dark else wx.WHITE
+
+        for action in ("start", "pause", "stop"):
+            tp[action + "_fg"] = contrasting_text_color(
+                tp[action + "_fg"], tp[action + "_bg"]
+            )
 
         tp["arm_bg"] = wx.Colour(172, 29, 27)  # Casual red
         tp["arm_fg"] = wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT)
