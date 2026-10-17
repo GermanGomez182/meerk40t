@@ -1,7 +1,10 @@
 # Proposed improvements
 
-These are proposals for this fork, in suggested order. They are not implemented
-features or a commitment to build every item. The starting point is a Mac user
+The user accepted this sequence for the fork. Implementation proceeds as small
+vertical slices; the status table is in [ITERATIONS.md](ITERATIONS.md) and the
+acceptance criteria are in [engineering/PRODUCT.md](engineering/PRODUCT.md) and
+its linked unit files. Items below describe the direction, not completed features.
+The starting point is a Mac user
 with a K40/Lihuiyu CO₂ laser. Many underlying capabilities already exist in
 MeerK40t; the focus is making them easier to find, understand, and trust.
 

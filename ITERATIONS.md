@@ -2,6 +2,25 @@
 
 Date: 2026-10-17
 
+## Accepted roadmap units
+
+The accepted scope is defined in [engineering/PRODUCT.md](engineering/PRODUCT.md).
+The existing application and uv workflow provide the walking skeleton and core
+verify command; no new bootstrap unit or verify-gate is needed.
+
+| Unit | Title | Depends on | Status |
+| --- | --- | --- | --- |
+| U03 | Readable workspace labels | U02 | todo |
+| U04 | Focused K40 companion workspace | U03 | todo |
+| U05 | Read-only job summary | U04 | todo |
+| U06 | Passive connection diagnosis | U05 | todo |
+| U07 | Local material test notes | U06 | todo |
+| U08 | Preview and framing context | U07 | todo |
+| U09 | Read-only design/import audit | U08 | todo |
+| U10 | Reliable autosave and measured reports | U09 | todo |
+
+## Iteration log
+
 ### U01 macOS workspace readability
 
 - Shipped: AC-U01-1 uses the existing bright workspace palette on macOS dark appearance, preserves saved choices, and leaves other platforms unchanged; AC-U01-2 restores the bright palette on macOS and for an explicit brighter reset while preserving other platforms' dark reset; AC-U01-3 dispatches reset and refresh when the brighter preference is enabled.
