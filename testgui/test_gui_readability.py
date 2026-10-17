@@ -259,7 +259,7 @@ class GuiReadabilityTest(unittest.TestCase):
                     return_value=(
                         [],
                         [],
-                        [("10", 80, 5, 0), ("30", 5, 80, -math.pi / 2)],
+                        [("10", 5, 80, 0), ("30", 80, 5, -math.pi / 2)],
                     ),
                 ),
                 patch.object(
@@ -268,7 +268,7 @@ class GuiReadabilityTest(unittest.TestCase):
                     return_value=(
                         [],
                         [],
-                        [("20", 290, 185, 0), ("40", 280, 90, -math.pi / 2)],
+                        [("20", 295, 90, 0), ("40", 100, 195, -math.pi / 2)],
                     ),
                 ),
                 patch.object(guide, "_draw_magnet_lines"),
@@ -294,10 +294,10 @@ class GuiReadabilityTest(unittest.TestCase):
             before, after = self.rasterize_bed_and_guides(guide, bed)
             for label, bounds in (
                 ("units", (5, 5, 35, 25)),
-                ("primary", (80, 5, 105, 25)),
-                ("secondary", (260, 160, 295, 190)),
-                ("primary vertical", (5, 80, 25, 115)),
-                ("secondary vertical", (275, 55, 299, 95)),
+                ("primary", (5, 80, 30, 100)),
+                ("secondary", (275, 75, 299, 100)),
+                ("primary vertical", (65, 5, 85, 25)),
+                ("secondary vertical", (85, 175, 105, 199)),
             ):
                 with self.subTest(canvas=canvas, label=label):
                     left, top, right, bottom = bounds
@@ -331,7 +331,7 @@ class GuiReadabilityTest(unittest.TestCase):
             with self.subTest(canvas=canvas):
                 guide = self.make_guide(canvas, "#000000")
                 before, after = self.rasterize_bed_and_guides(guide, bed)
-                for x, y in ((50, 2), (2, 80), (298, 80), (70, 198)):
+                for x, y in ((50, 2), (2, 120), (298, 120), (70, 198)):
                     self.assertEqual(
                         (after.GetRed(x, y), after.GetGreen(x, y), after.GetBlue(x, y)),
                         tuple(wx.Colour(canvas)[:3]),

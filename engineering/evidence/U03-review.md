@@ -21,3 +21,14 @@ WOULD NOT TRUST: The current mocked drawing tests establish foreground selection
 ```
 
 Handling: accepted. Added AC-U03-5 for a mixed bed/canvas raster regression and a consistent ruler backing. No override or test weakening.
+
+## Test-fixture correction
+
+Override: corrected only the new raster fixture's text placement and sample
+regions. Empirical wx.DrawText rendering placed the injected rotated primary
+text at x=0..4 for anchor (5,80), outside the test's x=5..25 search and across its
+supposedly empty backing sample. The fixture now uses the actual generators'
+orientation conventions and matching glyph regions. Contrast thresholds,
+palette preservation, disabled behavior, and full interior checks are unchanged.
+The test author confirmed bypassing only the new backing still produces 12
+assertion failures and no errors. Product code is committed separately.
