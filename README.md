@@ -80,6 +80,8 @@ appearance. Saved workspace colors are preserved.
 Ruler labels choose a readable foreground when their configured color would
 blend into the canvas, including translucent colors. Readable custom label
 colors are kept, and this rendering adjustment does not rewrite saved colors.
+Ruler bands keep a consistent backing when the bed is zoomed or panned beneath
+them; the document inside the rulers is not changed.
 Start, Pause, and Stop labels also use contrasting colors in both appearances.
 
 To brighten an existing workspace, open **Preferences → Colors** and select

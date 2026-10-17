@@ -171,6 +171,7 @@ class GuideWidget(Widget):
 
     def set_colors(self):
         background = self.scene.colors.get("background")
+        self._ruler_background_brush = wx.Brush(wx.Colour(*background[:3]))
         self.primary_guides_color = contrasting_text_color(
             self.scene.colors.get("guide"), background
         )
@@ -691,8 +692,9 @@ class GuideWidget(Widget):
             gc.StrokeLineSegments(starts, ends)
 
         # Draw all text labels
+        background = gc.CreateBrush(self._ruler_background_brush)
         for text, x, y, angle in text_data:
-            gc.DrawText(text, x, y, angle)
+            gc.DrawText(text, x, y, angle, background)
 
     def _calculate_primary_grid_data(self, w, h, gc=None):
         """Calculate primary grid lines and text labels"""
@@ -857,6 +859,7 @@ class GuideWidget(Widget):
             gc.StrokeLineSegments(starts, ends)
 
         # Draw all text with proper positioning
+        background = gc.CreateBrush(self._ruler_background_brush)
         for formatted_text, x, y, rotation in text_data:
             # Calculate actual text dimensions for proper positioning
             text_width, text_height = self._get_cached_text_extent(gc, formatted_text)
@@ -869,7 +872,7 @@ class GuideWidget(Widget):
                 final_x = x - text_width  # Right-align text
                 final_y = y
 
-            gc.DrawText(formatted_text, final_x, final_y, rotation)
+            gc.DrawText(formatted_text, final_x, final_y, rotation, background)
 
     def _calculate_secondary_guides(self, w, h):
         """Calculate secondary guides with viewport culling"""
@@ -1076,7 +1079,27 @@ class GuideWidget(Widget):
         p = self.scene.context
         self.units = p.units_name
         gc.SetFont(self.font, self.color_units)
-        gc.DrawText(self.units, self.edge_gap, self.edge_gap)
+        gc.DrawText(
+            self.units,
+            self.edge_gap,
+            self.edge_gap,
+            gc.CreateBrush(self._ruler_background_brush),
+        )
+
+    def _draw_ruler_backing(self, gc: wx.GraphicsContext, w: float, h: float) -> None:
+        # The bed and document may extend underneath the screen-aligned rulers.
+        thickness = self.edge_gap + self.line_length
+        gc.PushState()
+        try:
+            gc.SetPen(wx.TRANSPARENT_PEN)
+            gc.SetBrush(self._ruler_background_brush)
+            gc.DrawRectangle(0, 0, w, thickness)
+            gc.DrawRectangle(0, 0, thickness, h)
+            if self.scene.pane.grid.draw_grid_secondary:
+                gc.DrawRectangle(0, h - thickness, w, thickness)
+                gc.DrawRectangle(w - thickness, 0, thickness, h)
+        finally:
+            gc.PopState()
 
     def process_draw(self, gc):
         """
@@ -1097,6 +1120,7 @@ class GuideWidget(Widget):
             # Cannot be drawn.
             return
 
+        self._draw_ruler_backing(gc, w, h)
         self._draw_units(gc)
 
         self._draw_primary_guides(gc)
