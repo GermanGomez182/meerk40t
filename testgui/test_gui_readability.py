@@ -1,3 +1,4 @@
+import math
 import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
@@ -223,3 +224,135 @@ class GuiReadabilityTest(unittest.TestCase):
         )
         self.assertEqual(guide.scene.colors.__dict__, saved)
         self.assertFalse(guide.scene.context.elements.modified)
+
+    def rasterize_bed_and_guides(self, guide: object, bed_color: str) -> tuple:
+        from meerk40t.gui.scenewidgets.bedwidget import BedWidget
+
+        guide.scene.colors.bed = bed_color
+        guide.scene.context.device = SimpleNamespace(
+            label="Fixture laser",
+            view=SimpleNamespace(unit_width=1000, unit_height=1000),
+        )
+        guide.scene.has_background = False
+        saved = dict(guide.scene.colors.__dict__)
+        bitmap = wx.Bitmap(300, 200)
+        dc = wx.MemoryDC(bitmap)
+        dc.SetBackground(wx.Brush(guide.scene.colors.color_background))
+        dc.Clear()
+        gc = wx.GraphicsContext.Create(dc)
+        gc.Size = (300, 200)
+        try:
+            gc.PushState()
+            gc.Translate(-125, -75)
+            gc.Scale(0.5, 0.5)
+            BedWidget(guide.scene).process_draw(gc)
+            gc.PopState()
+            guide.scene.widget_root.scene_widget.matrix = Matrix(
+                0.5, 0, 0, 0.5, -125, -75
+            )
+            gc.Flush()
+            before = bitmap.ConvertToImage()
+            with (
+                patch.object(
+                    guide,
+                    "_calculate_primary_grid_data",
+                    return_value=(
+                        [],
+                        [],
+                        [("10", 80, 5, 0), ("30", 5, 80, -math.pi / 2)],
+                    ),
+                ),
+                patch.object(
+                    guide,
+                    "_calculate_secondary_guides",
+                    return_value=(
+                        [],
+                        [],
+                        [("20", 290, 185, 0), ("40", 280, 90, -math.pi / 2)],
+                    ),
+                ),
+                patch.object(guide, "_draw_magnet_lines"),
+            ):
+                guide.process_draw(gc)
+            gc.Flush()
+            after = bitmap.ConvertToImage()
+        finally:
+            del gc
+            dc.SelectObject(wx.NullBitmap)
+        self.assertEqual(guide.scene.colors.__dict__, saved)
+        self.assertFalse(guide.scene.context.elements.modified)
+        return before, after
+
+    def test_ac_u03_5_rasterized_labels_are_readable_over_opposite_bed_color(
+        self,
+    ) -> None:
+        for canvas, bed, source in (
+            ("#101010", "#ffffff", "#000000"),
+            ("#ffffff", "#101010", "#ffffff"),
+        ):
+            guide = self.make_guide(canvas, source)
+            before, after = self.rasterize_bed_and_guides(guide, bed)
+            for label, bounds in (
+                ("units", (5, 5, 35, 25)),
+                ("primary", (80, 5, 105, 25)),
+                ("secondary", (260, 160, 295, 190)),
+                ("primary vertical", (5, 80, 25, 115)),
+                ("secondary vertical", (275, 55, 299, 95)),
+            ):
+                with self.subTest(canvas=canvas, label=label):
+                    left, top, right, bottom = bounds
+                    pixels = [
+                        wx.Colour(
+                            after.GetRed(x, y),
+                            after.GetGreen(x, y),
+                            after.GetBlue(x, y),
+                        )
+                        for x in range(left, right)
+                        for y in range(top, bottom)
+                    ]
+                    self.assertGreaterEqual(
+                        max(contrast(pixel, wx.Colour(bed)) for pixel in pixels),
+                        4.5,
+                        "Ruler label region remains indistinguishable from the bed",
+                    )
+                    darkest = min(pixels, key=lambda color: luminance(tuple(color[:3])))
+                    lightest = max(
+                        pixels, key=lambda color: luminance(tuple(color[:3]))
+                    )
+                    self.assertGreaterEqual(
+                        contrast(darkest, lightest),
+                        4.5,
+                        "Rasterized glyphs need contrast against their actual backing",
+                    )
+            self.assertEqual(before.GetWidth(), after.GetWidth())
+
+    def test_ac_u03_5_ruler_backing_stays_in_edge_bands(self) -> None:
+        for canvas, bed in (("#101010", "#ffffff"), ("#ffffff", "#101010")):
+            with self.subTest(canvas=canvas):
+                guide = self.make_guide(canvas, "#000000")
+                before, after = self.rasterize_bed_and_guides(guide, bed)
+                for x, y in ((50, 2), (2, 80), (298, 80), (70, 198)):
+                    self.assertEqual(
+                        (after.GetRed(x, y), after.GetGreen(x, y), after.GetBlue(x, y)),
+                        tuple(wx.Colour(canvas)[:3]),
+                    )
+                for y in range(40, 160):
+                    for x in range(40, 260):
+                        self.assertEqual(
+                            (
+                                after.GetRed(x, y),
+                                after.GetGreen(x, y),
+                                after.GetBlue(x, y),
+                            ),
+                            (
+                                before.GetRed(x, y),
+                                before.GetGreen(x, y),
+                                before.GetBlue(x, y),
+                            ),
+                        )
+
+    def test_ac_u03_5_disabled_guides_leave_bed_raster_unchanged(self) -> None:
+        guide = self.make_guide("#101010", "#000000")
+        guide.scene.context.draw_mode = self.guides_disabled_flag
+        before, after = self.rasterize_bed_and_guides(guide, "#ffffff")
+        self.assertEqual(bytes(before.GetData()), bytes(after.GetData()))
