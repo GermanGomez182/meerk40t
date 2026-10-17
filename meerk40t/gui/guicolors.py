@@ -8,6 +8,7 @@ All color aspects exist, if they don't actually exist a base color will be provi
 """
 
 import random
+from platform import system
 
 import wx
 
@@ -91,7 +92,11 @@ class GuiColors(Service):
         Service.__init__(self, kernel, "colors")
         _ = kernel.translation
         for key, value in default_color.items():
-            if self._kernel.root.themes.dark and key in default_colors_dark:
+            if (
+                self._kernel.root.themes.dark
+                and system() != "Darwin"
+                and key in default_colors_dark
+            ):
                 value = default_colors_dark[key]
             self.setting(str, key, value)
 
@@ -200,6 +205,6 @@ class GuiColors(Service):
         """
         for key, value in default_color.items():
             setattr(self, key, value)
-        if self._kernel.root.themes.dark and not brighter:
+        if self._kernel.root.themes.dark and system() != "Darwin" and not brighter:
             for key, value in default_colors_dark.items():
                 setattr(self, key, value)

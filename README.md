@@ -35,6 +35,23 @@ Meerk40t has an advanced internal console system allowing access to most parts o
 
 ## Compiling from source
 
+### macOS workspace readability
+
+On macOS, new workspaces use a light drawing bed and gray surrounding canvas,
+including when macOS uses Dark Mode. Native controls still follow the system
+appearance. Saved workspace colors are preserved.
+
+To brighten an existing workspace, open **Preferences → Colors** and select
+**Reset Colors to brighter defaults** in Dark Mode, or **Reset Colors to Default**
+in Light Mode. Resetting replaces your custom workspace colors. Individual colors
+can also be adjusted on that tab. Restarting retains the selected colors.
+
+From a source checkout with dependencies installed, launch with
+`python meerk40t.py` (or `.venv/bin/python meerk40t.py` when using a `.venv`
+environment). Test the color behavior on a desktop with wxPython using
+`python -m unittest testgui.test_gui_workspace_colors -v`; run the existing core
+verification with `python -m unittest discover test -v`.
+
 Alternatively you can run MeerK40t directly from Python. `pip install meerk40t[all]` with python installed will usually be sufficient. Then merely run `meerk40t` at the command line.
 
 See [Install: Source wiki page](https://github.com/meerk40t/meerk40t/wiki/Install:-Source)

@@ -885,7 +885,7 @@ class Preferences(MWindow):
         # Not relevant
         return False
 
-    @color_reset.setter
+    @color_reset_brighter.setter
     def color_reset_brighter(self, value):
         if value:
             # We are resetting all GUI.colors
