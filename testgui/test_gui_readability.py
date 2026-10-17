@@ -225,7 +225,9 @@ class GuiReadabilityTest(unittest.TestCase):
         self.assertEqual(guide.scene.colors.__dict__, saved)
         self.assertFalse(guide.scene.context.elements.modified)
 
-    def rasterize_bed_and_guides(self, guide: object, bed_color: str) -> tuple:
+    def rasterize_bed_and_guides(
+        self, guide: object, bed_color: str, primary_label: str = "10"
+    ) -> tuple:
         from meerk40t.gui.scenewidgets.bedwidget import BedWidget
 
         guide.scene.colors.bed = bed_color
@@ -259,7 +261,7 @@ class GuiReadabilityTest(unittest.TestCase):
                     return_value=(
                         [],
                         [],
-                        [("10", 5, 80, 0), ("30", 80, 5, -math.pi / 2)],
+                        [(primary_label, 5, 80, 0), ("30", 80, 5, -math.pi / 2)],
                     ),
                 ),
                 patch.object(
@@ -356,3 +358,26 @@ class GuiReadabilityTest(unittest.TestCase):
         guide.scene.context.draw_mode = self.guides_disabled_flag
         before, after = self.rasterize_bed_and_guides(guide, "#ffffff")
         self.assertEqual(bytes(before.GetData()), bytes(after.GetData()))
+
+    def test_ac_u03_5_long_ruler_label_trailing_digit_remains_readable(self) -> None:
+        for canvas, bed, source in (
+            ("#101010", "#ffffff", "#000000"),
+            ("#ffffff", "#101010", "#ffffff"),
+        ):
+            with self.subTest(canvas=canvas):
+                guide = self.make_guide(canvas, source)
+                _, after = self.rasterize_bed_and_guides(guide, bed, "-10000")
+                pixels = [
+                    wx.Colour(
+                        after.GetRed(x, y), after.GetGreen(x, y), after.GetBlue(x, y)
+                    )
+                    for x in range(30, 38)
+                    for y in range(80, 92)
+                ]
+                darkest = min(pixels, key=lambda color: luminance(tuple(color[:3])))
+                lightest = max(pixels, key=lambda color: luminance(tuple(color[:3])))
+                self.assertGreaterEqual(
+                    contrast(darkest, lightest),
+                    4.5,
+                    "The trailing digit of a long ruler label disappears over the bed",
+                )
