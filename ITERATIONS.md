@@ -15,3 +15,18 @@ The change preserves existing color preferences. Users can choose Preferences > 
 Backlog: visual feedback on Mac; K40-specific layout and workflow improvements after user input.
 
 Spec-to-units was skipped because this is a single-slice change; verify-gate was skipped because the repository's existing unittest command was reused.
+
+### U02 uv desktop setup — 2026-10-17
+
+- Added an editable setuptools project for `uv run meerk40t`, a dependency lock,
+  a tracked Python 3.13 selection, default desktop dependencies, and an optional
+  development group. Legacy package metadata and the Python 3.6 requirement are
+  retained; uv desktop/development groups require Python 3.8 or later.
+- Updated source setup instructions and recorded proposed Mac/K40 improvements
+  in [ROADMAP.md](ROADMAP.md).
+- Verified the installed entry point imports this checkout in isolated Python
+  mode; desktop imports, wheel build, 633 core tests, and 10 GUI tests passed.
+- Packaging/configuration change: no artificial red-test commit. TDD role steps
+  and spec-to-units do not apply; the existing unittest verification is reused.
+- In progress: verify installation and launch checks in a fresh local clone
+  before publishing the packaging commits.

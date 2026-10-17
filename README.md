@@ -35,6 +35,42 @@ Meerk40t has an advanced internal console system allowing access to most parts o
 
 ## Compiling from source
 
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then run
+these commands from your checkout:
+
+```bash
+uv sync --locked
+uv run meerk40t
+```
+
+After the first install, `uv run meerk40t` is all you need. It runs this checkout
+as an editable package, so local changes are picked up automatically. No virtual
+environment activation is needed. The repository selects Python 3.13; uv can
+download it if needed. Internet access is required for the initial install.
+
+The default `desktop` group installs wxPython, Pillow, DXF support, HTTP and
+WebSocket dependencies. Camera support is optional: use `uv run --extra cam
+meerk40t`. Use `uv run meerk40t --simpleui` for the simplified interface.
+
+The uv desktop workflow requires Python 3.8 or later. The package's legacy
+Python requirement and setuptools metadata remain in place. On Linux, wxPython
+may need native GTK development libraries and a source build when a compatible
+wheel is unavailable; see the [wxPython installation guide](https://wxpython.org/pages/downloads/).
+The locked desktop install is verified on Apple Silicon macOS with Python 3.13.
+
+For development and verification:
+
+```bash
+uv sync --locked --group dev
+uv run --group dev python -m unittest discover test -v
+uv run python -m unittest testgui.test_gui_workspace_colors -v
+```
+
+GUI tests require access to a desktop display. `uv.lock` records dependency
+versions, and `.python-version` selects the default interpreter. Packaging uses
+the existing setuptools backend and console entry point, following
+[uv's project packaging guidance](https://docs.astral.sh/uv/concepts/projects/config/).
+
 ### macOS workspace readability
 
 On macOS, new workspaces use a light drawing bed and gray surrounding canvas,
@@ -46,17 +82,10 @@ To brighten an existing workspace, open **Preferences → Colors** and select
 in Light Mode. Resetting replaces your custom workspace colors. Individual colors
 can also be adjusted on that tab. Restarting retains the selected colors.
 
-From a source checkout with dependencies installed, launch with
-`python meerk40t.py` (or `.venv/bin/python meerk40t.py` when using a `.venv`
-environment). Test the color behavior on a desktop with wxPython using
-`python -m unittest testgui.test_gui_workspace_colors -v`; run the existing core
-verification with `python -m unittest discover test -v`.
-
-Alternatively you can run MeerK40t directly from Python. `pip install meerk40t[all]` with python installed will usually be sufficient. Then merely run `meerk40t` at the command line.
-
-See [Install: Source wiki page](https://github.com/meerk40t/meerk40t/wiki/Install:-Source)
-
 The wxMeerK40t is the GUI and is written in wxPython. We use AUI to allow to have a very highly configurable UI. We can easily add panes and tools and there are quite a few available already.
+
+See [ROADMAP.md](ROADMAP.md) for proposed improvements to this fork's macOS and
+K40/Lihuiyu workflow.
 
 ## Screenshots
 ![grafik](https://github.com/user-attachments/assets/e56135a2-7b1f-44be-9761-b92931e300f6)
