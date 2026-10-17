@@ -28,5 +28,7 @@ Spec-to-units was skipped because this is a single-slice change; verify-gate was
   mode; desktop imports, wheel build, 633 core tests, and 10 GUI tests passed.
 - Packaging/configuration change: no artificial red-test commit. TDD role steps
   and spec-to-units do not apply; the existing unittest verification is reused.
-- In progress: verify installation and launch checks in a fresh local clone
-  before publishing the packaging commits.
+- Fresh local clone of `c8d3e5e8c`: `uv sync --locked` installed 16 desktop
+  packages; `uv run meerk40t --version`, isolated editable-source/import checks,
+  and all 10 workspace tests passed. The clone remained clean afterward.
+- Verification details: [U02 packaging evidence](engineering/evidence/U02-packaging.md).
