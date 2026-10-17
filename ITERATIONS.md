@@ -10,7 +10,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 
 | Unit | Title | Depends on | Status |
 | --- | --- | --- | --- |
-| U03 | Readable workspace labels | U02 | todo |
+| U03 | Readable workspace labels | U02 | in-progress |
 | U04 | Focused K40 companion workspace | U03 | todo |
 | U05 | Read-only job summary | U04 | todo |
 | U06 | Passive connection diagnosis | U05 | todo |
