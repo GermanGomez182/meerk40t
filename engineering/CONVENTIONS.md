@@ -10,7 +10,7 @@ Targeted GUI suites run with a desktop display and wx.App. Access to test profil
 ## Layout and fixtures
 
 - U03: themes/color helpers and GuideWidget; tests in testgui/test_gui_readability.py; one owned wx.App per suite, no physical device.
-- U04: gui/k40workspace.py, registered by wxmeerk40t.py; tests in testgui/test_gui_k40workspace.py. Reusable fixture creates a parent wx.Frame, minimal context and command recorder; helper signature `make_context(device=None)` belongs to this test module.
+- U04: gui/k40workspace.py, registered by wxmeerk40t.py; tests in testgui/test_gui_k40workspace.py. The registered window exposes `.panel` with `refresh_data()`. Reusable fixture creates a parent wx.Frame, minimal context and command recorder; helper signature `make_context(device=None)` belongs to this test module.
 - U05: gui/k40reports.py; core tests in test/test_k40reports.py use bootstrap's dummy kernel and node operations. GUI integration extends U04's suite.
 - U06: extends k40reports.py and k40workspace.py; tests cover passive controller attributes with explicit simple fake objects, never mocks that manufacture missing state.
 - U07: gui/materialnotes.py and K40 workspace; local JSON tests use tempfile.TemporaryDirectory and explicit fictional material identifiers. No personal data or absolute local paths are tracked.
