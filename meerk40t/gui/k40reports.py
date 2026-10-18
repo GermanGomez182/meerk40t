@@ -40,7 +40,10 @@ def _design_bounds(elements: object, unavailable: str) -> str:
     if elements is None:
         return unavailable
     for node in elements.elems():
-        candidate = node.bounds
+        try:
+            candidate = node.bounds
+        except (TypeError, ValueError, OverflowError):
+            return unavailable
         if candidate is None or len(candidate) != 4:
             return unavailable
         coordinates = tuple(_finite_number(value) for value in candidate)
@@ -93,9 +96,10 @@ def build_job_summary(context: Context, translate: Callable[[str], str]) -> str:
             speed += " mm/s"
         passes = 1
         if getattr(operation, "passes_custom", False):
-            passes = _finite_number(getattr(operation, "passes", None))
-            if passes is not None:
-                passes = max(int(passes), 1)
+            try:
+                passes = max(int(getattr(operation, "passes", None)), 1)
+            except (TypeError, ValueError, OverflowError):
+                passes = None
         lines.append(
             _(
                 "{state} | {type} | {label} | Speed: {speed} | Controller power setting: {power} | Passes: {passes}"
