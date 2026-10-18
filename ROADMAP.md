@@ -10,7 +10,7 @@ MeerK40t; the focus is making them easier to find, understand, and trust.
 
 | Priority | Improvement | Intended result |
 | --- | --- | --- |
-| 1 | Finish Mac readability | Review the rendered workspace, then improve ruler text, grid contrast, selection handles, icons, and toolbar labels in light and dark appearances. |
+| 1 | Continue Mac readability polish | Ruler-label contrast and backing are implemented. Review the rendered workspace, then improve grid contrast, selection handles, icons, and toolbar labels in light and dark appearances. |
 | 2 | A focused K40 workspace | Offer a saved layout with connection status, jog and home controls, framing, cut/engrave settings, and job controls in a consistent place. Keep advanced tools accessible. |
 | 3 | A clearer job summary | Before starting, show operation order, speed and power settings with units, passes, dimensions, and placement on the bed. Make the selected device obvious. |
 | 4 | Better connection diagnostics | Explain USB connection failures and recovery steps, and distinguish connected, idle, queued, paused, and disconnected states. Never report hardware feedback the controller does not provide. |
@@ -23,6 +23,7 @@ MeerK40t; the focus is making them easier to find, understand, and trust.
 
 - Bright default drawing bed on macOS, with saved color choices preserved.
 - Repeatable uv setup and a short launch command.
+- First readability slice: ruler labels remain legible over the bed and canvas without changing saved palette values.
 
 ## How to choose the next slice
 

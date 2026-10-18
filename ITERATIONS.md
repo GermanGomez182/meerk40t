@@ -10,7 +10,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 
 | Unit | Title | Depends on | Status |
 | --- | --- | --- | --- |
-| U03 | Readable workspace labels | U02 | in-progress |
+| U03 | Readable workspace labels | U02 | done |
 | U04 | Focused K40 companion workspace | U03 | todo |
 | U05 | Read-only job summary | U04 | todo |
 | U06 | Passive connection diagnosis | U05 | todo |
@@ -34,6 +34,16 @@ The change preserves existing color preferences. Users can choose Preferences > 
 Backlog: visual feedback on Mac; K40-specific layout and workflow improvements after user input.
 
 Spec-to-units was skipped because this is a single-slice change; verify-gate was skipped because the repository's existing unittest command was reused.
+
+### U03 Readable workspace labels — 2026-10-18
+
+- Shipped: AC-U03-1 through AC-U03-4 retain readable foreground selection, palette preservation, action-label contrast, RGBA round-tripping, and guide refresh/visibility behavior.
+- Shipped: AC-U03-5 rasterizes ruler labels over mixed bed/canvas colors with backing confined to ruler bands and text footprints, including long and negative labels.
+- Commits: red `6f3dbe98d` → green `4e0cd9fe5` → test `ebaea12c0` → test `45d503b38` → test `d9cb4c20a` → fix `df7419aac`.
+- Review: round 1 CHANGES_REQUIRED → round 2 PASS; 1 finding (1 fixed, 0 rejected, 0 deferred).
+- Overrides: corrected only the new raster fixture's wx text coordinates and sample regions; thresholds and invariants were unchanged.
+- Deferred: icon, selection-handle, and toolbar-label polish remains a roadmap follow-up; no remaining U03-scope findings.
+- Verification: final orchestration run passed 633 core tests and 21 GUI tests; independent review passed 633 core tests and 11 readability GUI tests. No new visible text was added, so translation checks were not applicable.
 
 ### U02 uv desktop setup — 2026-10-17
 

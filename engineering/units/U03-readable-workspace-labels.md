@@ -1,7 +1,7 @@
 ---
 id: U03
 title: Readable workspace labels
-status: in-progress
+status: done
 depends_on: []
 requirements: [R1]
 invariants: [I2, I6]
