@@ -12,7 +12,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | --- | --- | --- | --- |
 | U03 | Readable workspace labels | U02 | done |
 | U04 | Focused K40 companion workspace | U03 | done |
-| U05 | Read-only job summary | U04 | todo |
+| U05 | Read-only job summary | U04 | in-progress |
 | U06 | Passive connection diagnosis | U05 | todo |
 | U07 | Local material test notes | U06 | todo |
 | U08 | Preview and framing context | U07 | todo |
