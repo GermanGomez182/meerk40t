@@ -89,6 +89,18 @@ To brighten an existing workspace, open **Preferences → Colors** and select
 in Light Mode. Resetting replaces your custom workspace colors. Individual colors
 can also be adjusted on that tab. Restarting retains the selected colors.
 
+### Focused K40 workspace
+
+Open **K40 Workspace** from the Window menu, or enter
+`window toggle K40Workspace` in MeerK40t's console. This companion window saves
+its size and position through the normal window settings.
+
+It groups shortcuts to Controller, Navigation, Laser controls, Operations,
+Material library, Material test, Properties, and Preferences. These open the
+existing tools. The active device is shown, and K40-specific shortcuts are
+disabled when another controller type is selected. A missing tool is reported
+in the window. Opening or refreshing this workspace sends no machine commands.
+
 The wxMeerK40t is the GUI and is written in wxPython. We use AUI to allow to have a very highly configurable UI. We can easily add panes and tools and there are quite a few available already.
 
 See [ROADMAP.md](ROADMAP.md) for proposed improvements to this fork's macOS and
