@@ -4,6 +4,7 @@ from typing import List, Tuple
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 
+from meerk40t.gui.k40reports import build_job_summary
 from meerk40t.gui.mwindow import MWindow
 from meerk40t.kernel import signal_listener
 from meerk40t.kernel.context import Context
@@ -59,6 +60,11 @@ class K40WorkspacePanel(ScrolledPanel):
                 if machine_specific:
                     self.machine_buttons.append(button)
             layout.Add(group, 0, wx.EXPAND | wx.ALL, 8)
+        self.job_summary = wx.TextCtrl(
+            self, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(-1, 180)
+        )
+        self.job_summary.SetMinSize((-1, 180))
+        layout.Add(self.job_summary, 0, wx.EXPAND | wx.ALL, 8)
         refresh = wx.Button(self, label=_("Refresh"))
         refresh.Bind(wx.EVT_BUTTON, self.on_refresh)
         layout.Add(refresh, 0, wx.ALIGN_RIGHT | wx.ALL, 8)
@@ -82,6 +88,7 @@ class K40WorkspacePanel(ScrolledPanel):
         self.device_status.SetLabel(status)
         for button in self.machine_buttons:
             button.Enable(supported)
+        self.job_summary.ChangeValue(build_job_summary(self.context, _))
         self.Layout()
 
     def open_tool(

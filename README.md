@@ -101,6 +101,13 @@ existing tools. The active device is shown, and K40-specific shortcuts are
 disabled when another controller type is selected. A missing tool is reported
 in the window. Opening or refreshing this workspace sends no machine commands.
 
+The workspace includes a read-only job-summary snapshot: active device, bed
+dimensions and scene-space design bounds in millimeters, then operations in
+document order with enabled state, speed, controller power setting and effective
+passes. The power value is a controller setting, not a measurement of tube output.
+Missing or invalid values are shown as **Unavailable**. Click **Refresh** after
+editing the artwork or settings to rebuild the snapshot.
+
 The wxMeerK40t is the GUI and is written in wxPython. We use AUI to allow to have a very highly configurable UI. We can easily add panes and tools and there are quite a few available already.
 
 See [ROADMAP.md](ROADMAP.md) for proposed improvements to this fork's macOS and
