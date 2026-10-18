@@ -16,7 +16,7 @@ def make_context(device: object = None) -> Context:
     kernel = Kernel("K40WorkspaceTests", "0", "fixture", ignore_settings=True)
     kernel.args = SimpleNamespace()
     context = kernel.root
-    context.themes = Themes(kernel)
+    kernel.add_service("themes", Themes(kernel))
     wxMeerK40t.sub_register(kernel)
     # Use the application's registration path without constructing a second wx.App.
     wxMeerK40t.module_open(SimpleNamespace(context=context))
@@ -102,6 +102,13 @@ class TestK40Workspace(unittest.TestCase):
 
     def test_existing_gui_registration_fixture_still_exposes_navigation(self) -> None:
         self.assertIsNotNone(self.context.lookup("window/Navigation"))
+
+    def test_existing_managed_window_fixture_resolves_themes_in_child_context(
+        self,
+    ) -> None:
+        window = MWindow(200, 150, self.context, "window/Fixture", self.parent)
+        self.windows.append(window)
+        self.assertIs(window.window_context.themes, self.context.themes)
 
     def test_ac_u04_1_window_menu_uses_managed_window_conventions(self) -> None:
         window_class = self.workspace_class()
