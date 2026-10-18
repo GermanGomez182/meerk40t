@@ -15,6 +15,13 @@ The existing desktop application remains the product. An opt-in K40 Workspace co
 - R7: Audit imported/current design dimensions, out-of-bed placement, unassigned elements, and exact duplicate vector geometry without automatically changing the document.
 - R8: Preserve the dirty workspace and report autosave failures, retaining recoverable prior files. Profile the new reports on a synthetic larger document and record results before adding optimizations.
 
+Material notes open in a separate managed Material Notes window from the
+companion's Materials group. The window is bound to the device displayed when
+opened, so switching the active device does not redirect an unsaved draft. Its
+form has Material, Thickness (mm), Settings tried, and Observed result fields.
+Material and result are required; thickness may be blank or a finite nonnegative
+number. Saving records an observation locally and never applies machine settings.
+
 ## Invariants
 
 - I1: Opening or refreshing reports never starts, homes, connects, fires, moves, or queues hardware work.

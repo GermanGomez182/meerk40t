@@ -24,3 +24,10 @@ Why: uv selects Python 3.13 but the existing package advertises older Python sup
 Over: introducing modern-only syntax or standard-library dependencies into runtime modules.
 Cost: use typing constructs compatible with existing source and avoid new runtime dependencies.
 
+## D5: Keep material observations in a separate managed window
+
+Why: the companion's reports remain read-only while a small form can retain a
+draft for the clearly displayed device during an active-device switch.
+Over: mixing editable notes into the report text or redirecting a draft silently.
+Cost: an additional local window, using existing geometry and tool registration.
+

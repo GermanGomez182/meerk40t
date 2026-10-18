@@ -10,4 +10,6 @@
 | Q6 | Which duplicate paths are safe to flag? | Exact identical vector geometry with the same transform; no automatic deletion. | Avoids speculative tolerance and destructive cleanup. |
 | Q7 | What performance work is justified? | Profile the new reports on a deterministic synthetic document; optimize only a measured issue. | No speculative code. |
 | Q8 | Git integration? | Continue the existing improvement branch and push finished commits to the fork. No upstream PR or merge. | Matches existing authorization. |
+| Q9 | What connection state is observable passively? | USB driver's `is_connected()` is a local software-handle getter, not a hardware query. TCP socket presence alone is unverified unless a known connection-status event establishes more. Never open a connection or query controller status for a report. | Reflects the existing CH341/TCP implementations without inventing live hardware feedback. |
+| Q10 | How should material notes behave during a device switch? | A separate managed Material Notes window remains bound to the clearly displayed device it opened for. Save uses that device ID; open a new notes window for another device. | Prevents redirecting an unsaved observation to a different machine. |
 
