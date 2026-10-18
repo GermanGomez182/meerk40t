@@ -284,3 +284,75 @@ class TestK40JobSummary(unittest.TestCase):
         window.panel.refresh_data()
         self.assertEqual(self.logical_state(), before)
         self.assertEqual(self.commands, [])
+
+    def test_ac_u05_2_invalid_geometry_width_keeps_initial_summary_usable(self) -> None:
+        for width in (None, "bad"):
+            with self.subTest(width=width):
+                self.geometry.clear()
+                self.operations.clear()
+                rect = self.rectangle()
+                rect.width = width
+                self.cut("Malformed rectangle contour").add_reference(rect)
+                before = self.logical_state()
+                geometry_before = (rect.x, rect.y, rect.width, rect.height)
+                report = self.report(self.make_window()).lower()
+                bounds = [line for line in report.splitlines() if "bounds" in line]
+                self.assertTrue(bounds)
+                self.assertIn("unavailable", " ".join(bounds))
+                self.assertIn("fixture co2", report)
+                self.assertIn("malformed rectangle contour", report)
+                self.assertEqual(
+                    (rect.x, rect.y, rect.width, rect.height), geometry_before
+                )
+                self.assertEqual(self.logical_state(), before)
+                self.assertEqual(self.commands, [])
+
+    def test_ac_u05_2_invalid_geometry_width_keeps_refreshed_summary_usable(
+        self,
+    ) -> None:
+        rect = self.rectangle()
+        self.cut("Refresh malformed contour").add_reference(rect)
+        window = self.make_window()
+        self.report(window)
+        for width in (None, "bad"):
+            with self.subTest(width=width):
+                rect.width = width
+                rect.set_dirty_bounds()
+                before = self.logical_state()
+                geometry_before = (rect.x, rect.y, rect.width, rect.height)
+                window.panel.refresh_data()
+                report = self.report(window).lower()
+                bounds = [line for line in report.splitlines() if "bounds" in line]
+                self.assertTrue(bounds)
+                self.assertIn("unavailable", " ".join(bounds))
+                self.assertIn("refresh malformed contour", report)
+                self.assertIn("fixture co2", report)
+                self.assertEqual(
+                    (rect.x, rect.y, rect.width, rect.height), geometry_before
+                )
+                self.assertEqual(self.logical_state(), before)
+                self.assertEqual(self.commands, [])
+
+    def test_ac_u05_1_fractional_string_pass_count_is_unavailable(self) -> None:
+        operation = self.cut("Malformed passes")
+        operation.passes = "2.5"
+        self.assertEqual(operation.implicit_passes, 1)
+        before = self.logical_state()
+        report = self.report(self.make_window())
+        self.assertRegex(
+            self.row(report, operation.label), r"passes?\s*:\s*unavailable"
+        )
+        self.assertEqual(self.logical_state(), before)
+        self.assertEqual(self.commands, [])
+
+    def test_ac_u05_1_numeric_fractional_pass_count_matches_effective_passes(
+        self,
+    ) -> None:
+        operation = self.cut("Numeric passes")
+        operation.passes = 2.5
+        self.assertEqual(operation.implicit_passes, 2)
+        before = self.logical_state()
+        report = self.report(self.make_window())
+        self.assertRegex(self.row(report, operation.label), r"passes?\s*:\s*2\b")
+        self.assertEqual(self.logical_state(), before)
+        self.assertEqual(self.commands, [])
