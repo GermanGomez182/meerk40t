@@ -2,7 +2,7 @@
 
 ## Product contract
 
-The existing desktop application remains the product. An opt-in K40 Workspace companion window groups the established tools and read-only reports. It opens through the Window menu or `window toggle K40Workspace`. The companion uses normal window geometry persistence. Existing main-window layouts remain intact.
+The existing desktop application remains the product. An opt-in K40 Workspace companion window groups the established tools and read-only reports. It opens through Tools → Tools → K40 Workspace or `window toggle K40Workspace`. The companion uses normal window geometry persistence. Existing main-window layouts remain intact.
 
 ## Requirements
 

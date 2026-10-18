@@ -1,7 +1,7 @@
 ---
 id: U04
 title: Focused K40 companion workspace
-status: in-progress
+status: done
 depends_on: [U03]
 requirements: [R2]
 invariants: [I1, I2, I6]
@@ -21,7 +21,7 @@ New hardware protocols, automatic motion/start, remote storage, and unrelated UI
 
 ## Acceptance criteria
 
-- AC-U04-1: Given GUI registration, when the user opens K40Workspace from Window or console, a managed window with normal geometry persistence exposes translated groups for machine tools, job review, materials, and document checks.
+- AC-U04-1: Given GUI registration, when the user opens K40Workspace from the managed Tools menu or console, a managed window with normal geometry persistence exposes translated groups for machine tools, job review, materials, and document checks.
 - AC-U04-2: Given an active Lihuiyu device, when a tool shortcut is clicked, the established controller/navigation/operation/preferences/properties/material-library/material-test window or laser pane opens; opening/refreshing the companion sends no hardware command. Every group contains useful existing tools rather than placeholders.
 - AC-U04-3: Given a non-Lihuiyu device or a device switch, when the window refreshes, the active label and supported-device state update and K40-specific tools are disabled.
 - AC-U04-4: Given a missing registered tool, when a shortcut is invoked, a visible useful message appears rather than an unknown command or silent failure.

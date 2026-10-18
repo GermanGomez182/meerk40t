@@ -11,7 +11,7 @@ MeerK40t; the focus is making them easier to find, understand, and trust.
 | Priority | Improvement | Intended result |
 | --- | --- | --- |
 | 1 | Continue Mac readability polish | Ruler-label contrast and backing are implemented. Review the rendered workspace, then improve grid contrast, selection handles, icons, and toolbar labels in light and dark appearances. |
-| 2 | A focused K40 workspace | Offer a saved layout with connection status, jog and home controls, framing, cut/engrave settings, and job controls in a consistent place. Keep advanced tools accessible. |
+| 2 | A focused K40 workspace (first slice) | A managed companion window now groups shortcuts to existing machine, operation, preference, property, and material tools. Connection diagnosis, job summary, material notes, and additional workflow improvements remain future slices. |
 | 3 | A clearer job summary | Before starting, show operation order, speed and power settings with units, passes, dimensions, and placement on the bed. Make the selected device obvious. |
 | 4 | Better connection diagnostics | Explain USB connection failures and recovery steps, and distinguish connected, idle, queued, paused, and disconnected states. Never report hardware feedback the controller does not provide. |
 | 5 | Materials and test results | Make existing material presets and test patterns easier to use; record material thickness, settings, and observed results locally for the actual machine. Avoid universal power recommendations. |
@@ -24,6 +24,7 @@ MeerK40t; the focus is making them easier to find, understand, and trust.
 - Bright default drawing bed on macOS, with saved color choices preserved.
 - Repeatable uv setup and a short launch command.
 - First readability slice: ruler labels remain legible over the bed and canvas without changing saved palette values.
+- First K40 workspace slice: a managed Tools window opens existing tools and reports active device support without sending hardware commands.
 
 ## How to choose the next slice
 

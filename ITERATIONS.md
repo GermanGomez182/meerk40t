@@ -11,7 +11,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | Unit | Title | Depends on | Status |
 | --- | --- | --- | --- |
 | U03 | Readable workspace labels | U02 | done |
-| U04 | Focused K40 companion workspace | U03 | in-progress |
+| U04 | Focused K40 companion workspace | U03 | done |
 | U05 | Read-only job summary | U04 | todo |
 | U06 | Passive connection diagnosis | U05 | todo |
 | U07 | Local material test notes | U06 | todo |
@@ -44,6 +44,16 @@ Spec-to-units was skipped because this is a single-slice change; verify-gate was
 - Overrides: corrected only the new raster fixture's wx text coordinates and sample regions; thresholds and invariants were unchanged.
 - Deferred: icon, selection-handle, and toolbar-label polish remains a roadmap follow-up; no remaining U03-scope findings.
 - Verification: final orchestration run passed 633 core tests and 21 GUI tests; independent review passed 633 core tests and 11 readability GUI tests. No new visible text was added, so translation checks were not applicable.
+
+### U04 Focused K40 companion workspace — 2026-10-18
+
+- Shipped: AC-U04-1 adds a managed K40 workspace available from Tools → Tools → K40 Workspace or the `window toggle K40Workspace` console command, with saved geometry and translated groups.
+- Shipped: AC-U04-2 provides shortcuts to eight existing tools and panes without sending hardware commands during open or refresh; AC-U04-3 updates supported-device state on device changes; AC-U04-4 reports missing tools visibly.
+- Commits: red `3e6b149ac` → test `c20bea607` → feat `0c49d837b`.
+- Review: round 1 PASS; 1 finding (1 fixed, 0 rejected, 0 deferred).
+- Overrides: corrected the test fixture to register Themes as a kernel service so child contexts receive it; behavior assertions were unchanged.
+- Deferred: connection diagnosis, job summary, material notes, and other later roadmap capabilities remain future units; no remaining U04 findings.
+- Verification: final orchestration run passed 633 core tests and 32 GUI tests; independent review passed 633 core tests and 11 K40 workspace GUI tests, including device-switch, listener-removal, and small-window scrolling checks. `uv run --locked --with polib --with chardet python translate_check.py de` exited 0; no locale edits were made and English fallback remains.
 
 ### U02 uv desktop setup — 2026-10-17
 

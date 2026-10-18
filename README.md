@@ -91,7 +91,7 @@ can also be adjusted on that tab. Restarting retains the selected colors.
 
 ### Focused K40 workspace
 
-Open **K40 Workspace** from the Window menu, or enter
+Open **Tools → Tools → K40 Workspace**, or enter
 `window toggle K40Workspace` in MeerK40t's console. This companion window saves
 its size and position through the normal window settings.
 
