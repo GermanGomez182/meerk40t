@@ -21,6 +21,13 @@ verify command; no new bootstrap unit or verify-gate is needed.
 
 ## Iteration log
 
+### Paused for a lower-token workflow — 2026-10-18
+
+Resume from [HANDOFF.md](HANDOFF.md) in a new session. U05 passed final review;
+its unit record is pending. U06, U07, U08 and U10 have prepared red-test drafts;
+U09 remains spec-only. Product implementation is paused. The workflow source in
+agent-config was updated for fresh contexts and one active unit at a time.
+
 ### U01 macOS workspace readability
 
 - Shipped: AC-U01-1 uses the existing bright workspace palette on macOS dark appearance, preserves saved choices, and leaves other platforms unchanged; AC-U01-2 restores the bright palette on macOS and for an explicit brighter reset while preserving other platforms' dark reset; AC-U01-3 dispatches reset and refresh when the brighter preference is enabled.

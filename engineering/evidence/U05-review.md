@@ -25,3 +25,36 @@ Both findings accepted. Regression tests precede fixes. Malformed pass strings
 will be explicitly unavailable; valid numeric values retain operation conversion
 semantics. Invalid numeric geometry will leave the report usable with unavailable
 bounds.
+
+## Regression evidence
+
+The orchestrator reproduced the failures at `28a662982`: 14 summary tests,
+one assertion failure for string passes and four subtest errors for invalid
+rectangle widths during construction and refresh. The ten original tests and
+the valid numeric fractional-pass control remained green. Tests were committed
+as `71d63381c`, without changing existing assertions.
+
+The fix catches numeric geometry failures at bounds access and reports
+Unavailable. Direct `int(raw)` conversion preserves effective pass semantics;
+invalid representations visibly remain Unavailable. The orchestrator's combined
+GUI suite passed all 46 tests, and runtime Ruff passed with target Python 3.7.
+
+## Round 2: 2026-10-18, reviewed cb238f64f
+
+```text
+VERDICT: PASS
+ROUND: 2
+VERIFY: PASS (independent: 14 job-summary GUI tests; 633 core tests in round 1. Orchestrator: post-fix 633 core tests passed in 46.978s)
+TEST INTEGRITY: unchanged since regression RED 71d63381c. Four regression tests were added after 01ac49c97, justified by the accepted findings; original assertions remain unchanged.
+AC COVERAGE:
+  AC-U05-1: ok
+  AC-U05-2: ok
+  AC-U05-3: ok
+INVARIANTS:
+  I1: guarded at meerk40t/gui/k40reports.py:66; collection issues no hardware or console commands
+  I3: guarded at meerk40t/gui/k40reports.py:43 and :99; invalid geometry and malformed pass representations visibly report Unavailable, while valid counts preserve effective conversion semantics
+  I7: guarded at meerk40t/gui/k40reports.py:42 and :90; ordered traversal preserves logical document state, references, selection, undo history, and queue
+FINDINGS:
+none
+WOULD NOT TRUST: nothing beyond the above
+```
