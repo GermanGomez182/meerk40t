@@ -364,3 +364,45 @@ class TestK40Preview(unittest.TestCase):
         self.assertRegex(error, r"unavailable|missing|not found")
         self.assertEqual(self.commands, [])
         self.assertEqual(self.plan_requests, [])
+
+    def test_ac_u08_3_missing_framing_pane_error_is_readable_after_scrolling(
+        self,
+    ) -> None:
+        self.context.kernel.unregister("pane/laser")
+        before = self.logical_state()
+        window = self.make_window()
+        window.SetSize((450, 650))
+        window.Show()
+        window.Layout()
+        self.app.ProcessPendingEvents()
+        panel = window.panel
+        framing = self.button(window, "Framing controls")
+        panel.ScrollChildIntoView(framing)
+        self.app.ProcessPendingEvents()
+        self.assertGreater(panel.GetViewStart()[1], 0)
+        self.click(framing)
+        panel.Layout()
+        self.app.ProcessPendingEvents()
+        errors = [
+            child
+            for child in descendants(panel)
+            if isinstance(child, wx.StaticText)
+            and re.search(r"unavailable|missing|not found", child.GetLabel().lower())
+        ]
+        self.assertTrue(errors, "Missing framing controls must produce an error")
+        viewport = panel.GetClientRect()
+        self.assertTrue(
+            any(
+                viewport.Contains(
+                    wx.Rect(
+                        panel.ScreenToClient(error.GetScreenPosition()),
+                        error.GetSize(),
+                    )
+                )
+                for error in errors
+            ),
+            "The error must be readable inside the scrolled panel viewport",
+        )
+        self.assertEqual(self.commands, [])
+        self.assertEqual(self.plan_requests, [])
+        self.assertEqual(self.logical_state(), before)
