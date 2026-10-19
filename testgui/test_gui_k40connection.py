@@ -166,6 +166,19 @@ class TestK40Connection(unittest.TestCase):
         self.assertEqual(usb.local_reads, 0)
         self.assert_no_hardware_calls()
 
+    def test_ac_u06_1_network_transport_takes_precedence_over_mock_mode(self) -> None:
+        self.device.mock = True
+        self.device.networked = True
+        usb = USBConnection(True)
+        self.device.controller.connection = usb
+        report = self.text(self.make_window())
+        self.assertRegex(report, r"network|tcp")
+        self.assertIn("unverified", report)
+        self.assertNotIn("mock transport", report)
+        self.assertNotRegex(report, r"(?:connection|network|tcp)[^\n]*\bconnected\b")
+        self.assertEqual(usb.local_reads, 0)
+        self.assert_no_hardware_calls()
+
     def test_ac_u06_2_software_pause_and_queue_do_not_claim_physical_progress(
         self,
     ) -> None:
@@ -173,6 +186,8 @@ class TestK40Connection(unittest.TestCase):
         self.queue.extend((object(), object(), object()))
         report = self.text(self.make_window())
         self.assertRegex(report, r"software[^\n]*pause|pause[^\n]*software")
+        self.assertIn("software pause: paused", report)
+        self.assertNotIn("software pause: not paused", report)
         self.assertRegex(report, r"queue[^\n]*\b3\b")
         self.assertRegex(report, r"physical[^\n]*(?:unknown|unavailable|not observed)")
         self.assertRegex(report, r"tube[^\n]*(?:unknown|unavailable|not observed)")
@@ -190,6 +205,8 @@ class TestK40Connection(unittest.TestCase):
         self.device.driver.paused = True
         report = self.text(self.make_window())
         self.assertRegex(report, r"software[^\n]*pause|pause[^\n]*software")
+        self.assertIn("software pause: paused", report)
+        self.assertNotIn("software pause: not paused", report)
         self.assertRegex(report, r"queue[^\n]*\b0\b")
         self.assertRegex(report, r"physical[^\n]*(?:unknown|unavailable|not observed)")
         self.assertRegex(report, r"tube[^\n]*(?:unknown|unavailable|not observed)")
