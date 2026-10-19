@@ -10,7 +10,7 @@ from unittest.mock import patch
 import wx
 
 from meerk40t.gui.mwindow import MWindow
-from meerk40t.kernel import Service
+from meerk40t.kernel import Kernel, Service
 from testgui.test_gui_k40workspace import descendants, make_context
 
 
@@ -207,6 +207,60 @@ class TestMaterialNotes(unittest.TestCase):
         report = self.text(self.open_notes())
         self.assertIn("Fixture replacement-machine observation", report)
         self.assertNotIn("Fixture deleted-machine observation", report)
+        for name, contents in previous.items():
+            self.assertEqual(self.stored_files()[name], contents)
+        self.assertEqual(self.commands, [])
+
+    def test_ac_u07_2_duplicate_reusing_deleted_path_keeps_machine_notes_isolated(
+        self,
+    ) -> None:
+        from meerk40t.device.basedevice import plugin
+
+        kernel = self.context.kernel
+        provider_path = "provider/device/fixture-device"
+
+        def provider(kernel: Kernel, path: str, choices: list) -> Service:
+            service = Service(kernel, path)
+            service.name = "LihuiyuDevice"
+            service.label = next(
+                choice["default"] for choice in choices if choice["attr"] == "label"
+            )
+            return service
+
+        kernel.register(provider_path, provider)
+        source = provider(
+            kernel,
+            "fixture-device1",
+            choices=[{"attr": "label", "default": "FixtureSource"}],
+        )
+        kernel.add_service("device", source, provider_path, activate=True)
+        plugin(kernel, "boot")
+        window = self.open_notes()
+        self.fill(window, material_name="Fixture deleted-source observation")
+        self.save(window)
+        previous = self.stored_files()
+        source_index = list(kernel.services("device")).index(source)
+        Kernel.console(kernel, f"device duplicate {source_index}\n")
+        clone = list(kernel.services("device"))[-1]
+        self.assertIsNot(clone, source)
+        self.assertEqual(clone.path, "fixture-device2")
+        kernel.activate_service_path("device", clone.path)
+        Kernel.console(kernel, f"device delete {source_index}\n")
+        self.assertNotIn(source.path, kernel.contexts)
+        clone_index = list(kernel.services("device")).index(clone)
+        Kernel.console(kernel, f"device duplicate {clone_index}\n")
+        replacement = list(kernel.services("device"))[-1]
+        self.assertIsNot(replacement, clone)
+        self.assertEqual(replacement.path, source.path)
+        kernel.activate_service_path("device", replacement.path)
+        reopened = self.open_notes()
+        self.assertNotIn("Fixture deleted-source observation", self.text(reopened))
+        self.assertEqual(self.stored_files(), previous)
+        self.fill(reopened, material_name="Fixture replacement observation")
+        self.save(reopened)
+        report = self.text(self.open_notes())
+        self.assertIn("Fixture replacement observation", report)
+        self.assertNotIn("Fixture deleted-source observation", report)
         for name, contents in previous.items():
             self.assertEqual(self.stored_files()[name], contents)
         self.assertEqual(self.commands, [])
