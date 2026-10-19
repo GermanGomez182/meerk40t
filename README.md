@@ -108,6 +108,15 @@ passes. The power value is a controller setting, not a measurement of tube outpu
 Missing or invalid values are shown as **Unavailable**. Click **Refresh** after
 editing the artwork or settings to rebuild the snapshot.
 
+The passive connection snapshot shows USB connection state from the existing
+local handle, mock mode, or an **unverified** network connection. It never opens
+USB, probes a socket, or sends a machine command. Software controller state,
+driver pause and queue size are separate observations; unavailable state stays
+**Unknown**. Physical position and tube output remain unknown, and an empty
+software queue does not confirm that a physical job has finished. Connection
+errors and inaccessible status values appear with a next step while the other
+reports and tools remain available. Use **Refresh** to collect a new snapshot.
+
 The wxMeerK40t is the GUI and is written in wxPython. We use AUI to allow to have a very highly configurable UI. We can easily add panes and tools and there are quite a few available already.
 
 See [ROADMAP.md](ROADMAP.md) for proposed improvements to this fork's macOS and

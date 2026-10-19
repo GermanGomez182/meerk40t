@@ -115,3 +115,76 @@ def build_job_summary(context: Context, translate: Callable[[str], str]) -> str:
             )
         )
     return "\n".join(lines)
+
+
+def build_connection_report(context: Context, translate: Callable[[str], str]) -> str:
+    _ = translate
+    unknown = _("Unknown")
+    device = getattr(context, "device", None)
+    if device is None:
+        return _("Connection: unavailable — no active device")
+    if getattr(device, "name", None) != "LihuiyuDevice":
+        return _("Connection: unavailable — unsupported device")
+    lines = [_("Passive connection snapshot — no hardware probing")]
+    next_step = _(
+        "Check the USB cable and controller; review the Controller window, then refresh."
+    )
+    try:
+        if getattr(device, "mock", False):
+            transport = _("Mock transport — no hardware connection observed")
+        elif getattr(device, "networked", False):
+            transport = _("Network / TCP connection: unverified (no socket probing)")
+        else:
+            controller = getattr(device, "controller", None)
+            connection = getattr(controller, "connection", None)
+            connected = connection is not None and connection.is_connected()
+            transport = (
+                _("USB connection: connected (local software handle only)")
+                if connected
+                else _("USB connection: disconnected")
+            )
+        lines.append(transport)
+    except (AttributeError, OSError, RuntimeError, TypeError, ValueError) as error:
+        # Status providers can fail independently; expose each failure in the report.
+        lines.append(_("Connection status error: {error}").format(error=error))
+        lines.append(next_step)
+    try:
+        controller = getattr(device, "controller", None)
+        state = getattr(controller, "state", None)
+        driver = getattr(device, "driver", None)
+        paused = getattr(driver, "paused", None)
+        lines.append(
+            _("Software controller state: {state}").format(
+                state=_(state) if state else unknown
+            )
+        )
+        pause = _("Paused") if paused is True or state == "pause" else unknown
+        if paused is False and state != "pause":
+            pause = _("Not paused")
+        lines.append(_("Software pause: {pause}").format(pause=pause))
+    except (AttributeError, OSError, RuntimeError, TypeError, ValueError) as error:
+        lines.append(_("Software controller status error: {error}").format(error=error))
+        lines.append(next_step)
+    try:
+        spooler = getattr(device, "spooler", None)
+        queue = getattr(spooler, "queue", None)
+        size = str(len(queue)) if queue is not None else unknown
+        lines.append(_("Software queue size: {size}").format(size=size))
+    except (AttributeError, OSError, RuntimeError, TypeError, ValueError) as error:
+        lines.append(_("Software queue status error: {error}").format(error=error))
+        lines.append(next_step)
+    try:
+        controller = getattr(device, "controller", None)
+        errors = getattr(controller, "connection_errors", None)
+        lines.append(
+            _("Connection errors: {count}").format(
+                count=str(errors) if errors is not None else unknown
+            )
+        )
+        if errors:
+            lines.append(next_step)
+    except (AttributeError, OSError, RuntimeError, TypeError, ValueError) as error:
+        lines.append(_("Connection errors unavailable: {error}").format(error=error))
+        lines.append(next_step)
+    lines.extend((_("Physical position: unknown"), _("Tube output: unknown")))
+    return "\n".join(lines)
