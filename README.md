@@ -129,8 +129,11 @@ the established tools without applying presets or starting a job.
 Notes reload by the device's service path and a persistent `material_notes_id`
 in its settings, independently of its label. Deleting a device and creating a
 replacement at the same path gives the replacement a new identifier and separate
-notes. Removed devices' files and older path-only files remain available for
+notes. Duplicating a device also gives the duplicate a separate identifier.
+Removed devices' files and older path-only files remain available for
 manual recovery; they are never automatically assigned to another device.
+The identifier reaches disk through normal configuration saving. A first-session
+crash before that save can leave a notes file requiring manual recovery.
 Notes are local JSON files in the `material-notes` directory under MeerK40t's
 application work directory. Saves replace the file atomically and preserve notes
 saved by other open windows. Save or load errors appear in the window; a failed

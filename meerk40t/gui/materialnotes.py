@@ -24,11 +24,11 @@ class MaterialNotes(MWindow):
         self.device_path = getattr(device, "path", "")
         self.device_id = ""
         if self.device_path:
-            device.setting(str, "material_notes_id", "")
-            if not device.material_notes_id:
-                device.material_notes_id = str(uuid4())
-                device.write_persistent("material_notes_id", device.material_notes_id)
-            self.device_id = device.material_notes_id
+            # Device duplication copies public attributes, but not configuration keys.
+            self.device_id = device.read_persistent(str, "material_notes_id") or ""
+            if not self.device_id:
+                self.device_id = str(uuid4())
+                device.write_persistent("material_notes_id", self.device_id)
         identity = hashlib.sha256(
             json.dumps([self.device_path, self.device_id]).encode("utf-8")
         ).hexdigest()
