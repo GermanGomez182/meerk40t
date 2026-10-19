@@ -6,6 +6,7 @@ from wx.lib.scrolledpanel import ScrolledPanel
 
 from meerk40t.gui.k40reports import (
     build_connection_report,
+    build_design_audit,
     build_job_summary,
     build_preview_report,
 )
@@ -94,6 +95,11 @@ class K40WorkspacePanel(ScrolledPanel):
         self.machine_buttons.append(framing)
         preview.Add(framing, 0, wx.EXPAND | wx.ALL, 3)
         layout.Add(preview, 0, wx.EXPAND | wx.ALL, 8)
+        self.design_audit = wx.TextCtrl(
+            self, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(-1, 180)
+        )
+        self.design_audit.SetMinSize((-1, 180))
+        layout.Add(self.design_audit, 0, wx.EXPAND | wx.ALL, 8)
         refresh = wx.Button(self, label=_("Refresh"))
         refresh.Bind(wx.EVT_BUTTON, self.on_refresh)
         layout.Add(refresh, 0, wx.ALIGN_RIGHT | wx.ALL, 8)
@@ -120,6 +126,7 @@ class K40WorkspacePanel(ScrolledPanel):
         self.job_summary.ChangeValue(build_job_summary(self.context, _))
         self.connection_report.ChangeValue(build_connection_report(self.context, _))
         self.preview_report.ChangeValue(build_preview_report(self.context, _))
+        self.design_audit.ChangeValue(build_design_audit(self.context, _))
         self.Layout()
 
     def open_tool(

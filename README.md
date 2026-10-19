@@ -108,6 +108,18 @@ passes. The power value is a controller setting, not a measurement of tube outpu
 Missing or invalid values are shown as **Unavailable**. Click **Refresh** after
 editing the artwork or settings to rebuild the snapshot.
 
+The read-only **Design/import audit** reports scene-space bounds and dimensions
+in millimeters, elements outside the configured bed, assignment counts and
+unassigned identifiers, and groups of exact duplicate vectors. References under
+disabled operations and nested effects count as assigned. Duplicates require
+identical vector segment sequences and all six current transform values; styling
+is ignored. Reversed paths, alternate encodings and equivalent geometry under
+different transforms are not matched. Text and images are unsupported for duplicate
+checks. Missing or invalid geometry and bed dimensions appear as limitations while
+supported checks remain available; incomplete design bounds and dimensions are
+unavailable. Click **Refresh** after editing. The audit never scales, classifies,
+deletes, changes selections, or queues work.
+
 Preview and framing shows scene origin (0, 0 mm), the configured home corner,
 scene-space design bounds, and a **Software duration estimate** summed from enabled
 operations. Missing or invalid estimates make the total **Unavailable**; the

@@ -1,11 +1,14 @@
 # Python 3.6 cannot use postponed annotations or subscript built-in collections.
 # ruff: noqa: FA100
+from copy import copy
 from math import isfinite
 from re import fullmatch
-from typing import Callable, Optional
+from typing import Callable, Dict, List, Optional, Tuple
 
+from meerk40t.core.node.node import Node
 from meerk40t.core.units import UNITS_PER_MM, Length
 from meerk40t.kernel.context import Context
+from meerk40t.svgelements import Matrix
 
 
 def _finite_number(value: object) -> Optional[float]:
@@ -250,3 +253,166 @@ def build_preview_report(context: Context, translate: Callable[[str], str]) -> s
             ),
         )
     )
+
+
+def _validate_audit_shape(node: Node, translate: Callable[[str], str]) -> None:
+    _ = translate
+    coordinates = {
+        "elem rect": ("x", "y", "width", "height", "rx", "ry"),
+        "elem ellipse": ("cx", "cy", "rx", "ry"),
+        "elem line": ("x1", "y1", "x2", "y2"),
+        "elem point": ("x", "y"),
+    }
+    # Shape bounding boxes can omit NaN coordinates and appear falsely complete.
+    for attribute in coordinates.get(node.type, ()):
+        if _finite_number(getattr(node, attribute, None)) is None:
+            raise ValueError(
+                _("Invalid shape coordinate: {attribute}").format(attribute=attribute)
+            )
+
+
+def _audit_bounds(
+    node: Node, translate: Callable[[str], str]
+) -> Tuple[float, float, float, float]:
+    _ = translate
+    _validate_audit_shape(node, _)
+    candidate = node.bounds
+    if candidate is None or len(candidate) != 4:
+        raise ValueError(_("Missing bounds"))
+    values = tuple(float(value) for value in candidate)
+    if not all(isfinite(value) for value in values):
+        raise ValueError(_("Nonfinite bounds"))
+    left, top, right, bottom = values
+    if left > right or top > bottom:
+        raise ValueError(_("Invalid bounds order"))
+    return left, top, right, bottom
+
+
+def _audit_vector_key(
+    node: Node, translate: Callable[[str], str]
+) -> Tuple[object, ...]:
+    _ = translate
+    _validate_audit_shape(node, _)
+    matrix = tuple(node.matrix[index] for index in range(6))
+    if any(_finite_number(value) is None for value in matrix):
+        raise ValueError(_("Nonfinite transform"))
+    # Reset only the copy: a singular transform can hide distinct native segments.
+    local = copy(node)
+    local.matrix = Matrix()
+    geometry = local.as_geometry()
+    segments = geometry.segments[: geometry.index]
+    return matrix, segments.shape, segments.dtype.str, segments.tobytes()
+
+
+def build_design_audit(context: Context, translate: Callable[[str], str]) -> str:
+    _ = translate
+    unavailable = _("Unavailable")
+    elements = getattr(context, "elements", None)
+    nodes = list(elements.elems()) if elements is not None else []
+    assigned_ids = set()
+    if elements is not None:
+        for operation in elements.ops():
+            for descendant in operation.flat():
+                if descendant.type == "reference":
+                    assigned_ids.add(id(descendant.node))
+    assigned: List[str] = []
+    unassigned: List[str] = []
+    outside: List[str] = []
+    limitations: List[str] = []
+    duplicates: Dict[Tuple[object, ...], List[str]] = {}
+    bounds: List[Tuple[float, float, float, float]] = []
+    device = getattr(context, "device", None)
+    width = _bed_dimension(device, "bedwidth", "unit_width")
+    height = _bed_dimension(device, "bedheight", "unit_height")
+    vectors = {
+        "elem path",
+        "elem polyline",
+        "elem rect",
+        "elem ellipse",
+        "elem line",
+        "elem point",
+    }
+    for index, node in enumerate(nodes, 1):
+        identifier = _("{label} [ID: {id}; element {index}]").format(
+            label=node.label or _("Unlabeled"),
+            id=getattr(node, "id", None) or unavailable,
+            index=index,
+        )
+        (assigned if id(node) in assigned_ids else unassigned).append(identifier)
+        try:
+            candidate = _audit_bounds(node, _)
+            bounds.append(candidate)
+            if (
+                width is not None
+                and height is not None
+                and (
+                    candidate[0] < 0
+                    or candidate[1] < 0
+                    or candidate[2] > width * UNITS_PER_MM
+                    or candidate[3] > height * UNITS_PER_MM
+                )
+            ):
+                outside.append(identifier)
+        except (ArithmeticError, AttributeError, TypeError, ValueError) as error:
+            limitations.append(
+                _("Bounds unavailable for {element}: {error}").format(
+                    element=identifier, error=error
+                )
+            )
+        if node.type not in vectors:
+            limitations.append(
+                _("Duplicate check unsupported for {element} ({type})").format(
+                    element=identifier, type=_(node.type)
+                )
+            )
+            continue
+        try:
+            key = _audit_vector_key(node, _)
+            duplicates.setdefault(key, []).append(identifier)
+        except (ArithmeticError, AttributeError, TypeError, ValueError) as error:
+            limitations.append(
+                _("Duplicate check unavailable for {element}: {error}").format(
+                    element=identifier, error=error
+                )
+            )
+    lines = [_("Design/import audit snapshot — refresh after editing")]
+    if not nodes:
+        lines.append(_("No design elements; geometry checks unavailable"))
+    if bounds and len(bounds) == len(nodes):
+        left = min(value[0] for value in bounds) / UNITS_PER_MM
+        top = min(value[1] for value in bounds) / UNITS_PER_MM
+        right = max(value[2] for value in bounds) / UNITS_PER_MM
+        bottom = max(value[3] for value in bounds) / UNITS_PER_MM
+        lines.extend(
+            (
+                _(
+                    "Scene-space design bounds: {left:g}, {top:g}, {right:g}, {bottom:g} mm"
+                ).format(left=left, top=top, right=right, bottom=bottom),
+                _("Design dimensions: {width:g} × {height:g} mm").format(
+                    width=right - left, height=bottom - top
+                ),
+            )
+        )
+    else:
+        lines.extend(
+            (_("Design bounds: Unavailable"), _("Design dimensions: Unavailable"))
+        )
+    if width is None or height is None:
+        lines.append(_("Outside bed: Unavailable — missing or invalid bed dimensions"))
+    else:
+        lines.append(
+            _("Outside bed: {count} (checked {checked} of {total} elements)").format(
+                count=len(outside), checked=len(bounds), total=len(nodes)
+            )
+        )
+        lines.extend(outside)
+    lines.append(_("Assigned elements: {count}").format(count=len(assigned)))
+    lines.append(_("Unassigned elements: {count}").format(count=len(unassigned)))
+    lines.extend(unassigned)
+    groups = [group for group in duplicates.values() if len(group) > 1]
+    lines.append(_("Exact duplicate vector groups: {count}").format(count=len(groups)))
+    lines.extend("; ".join(group) for group in groups)
+    if limitations:
+        lines.append(_("Limitations:"))
+        lines.extend(limitations)
+    return "\n".join(lines)
