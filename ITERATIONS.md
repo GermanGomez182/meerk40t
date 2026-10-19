@@ -14,19 +14,18 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | U04 | Focused K40 companion workspace | U03 | done |
 | U05 | Read-only job summary | U04 | done |
 | U06 | Passive connection diagnosis | U05 | done |
-| U07 | Local material test notes | U06 | in-progress |
+| U07 | Local material test notes | U06 | done |
 | U08 | Preview and framing context | U07 | todo |
 | U09 | Read-only design/import audit | U08 | todo |
 | U10 | Reliable autosave and measured reports | U09 | todo |
 
 ## Iteration log
 
-### Paused for a lower-token workflow — 2026-10-18
+### Workflow pause — 2026-10-18
 
-Resume from [HANDOFF.md](HANDOFF.md) in a new session. U05 passed final review;
-its unit record is pending. U06, U07, U08 and U10 have prepared red-test drafts;
-U09 remains spec-only. Product implementation is paused. The workflow source in
-agent-config was updated for fresh contexts and one active unit at a time.
+Historical note: work paused to update the workflow source in agent-config and
+resume with fresh contexts. Current progress and next steps are recorded in
+[HANDOFF.md](HANDOFF.md).
 
 ### U01 macOS workspace readability
 
@@ -83,6 +82,18 @@ Spec-to-units was skipped because this is a single-slice change; verify-gate was
 - Overrides: none.
 - Deferred: none.
 - Verification: final orchestration passed 633 core tests (43.954s), 60 GUI tests (0.946s), and Ruff with Python 3.7 target; translation check exited 0 with English fallback and no locale changes. Independent review passed 633 core tests (45.057s), 39 focused GUI tests, and Ruff with Python 3.7 target. Evidence: [U06 review](engineering/evidence/U06-review.md).
+
+### U07 Local material test notes — 2026-10-19
+
+- Shipped: AC-U07-1 opens existing material/test shortcuts and a managed notes window; tests: `test_ac_u07_1_material_notes_shortcut_opens_registered_managed_window`.
+- Shipped: AC-U07-2 persists notes in explicit local WORKDIR/material-notes JSON, bound to the opening device path and persisted identifier read directly from settings; tests: `test_ac_u07_2_explicit_save_reloads_observation_without_applying_settings`, `test_ac_u07_2_reused_service_path_does_not_expose_deleted_machine_notes`, `test_ac_u07_2_duplicate_reusing_deleted_path_keeps_machine_notes_isolated`, `test_ac_u07_2_machine_identity_isolates_notes_even_with_same_label`, `test_ac_u07_2_device_switch_keeps_draft_bound_to_opening_machine`.
+- Shipped: AC-U07-3 validates required fields and blank or finite nonnegative thickness, retains drafts and existing records on errors, retries atomic replacement, and protects corrupt/unreadable stores; tests: `test_ac_u07_3_invalid_required_or_thickness_input_keeps_existing_records`, `test_ac_u07_3_blank_zero_and_fractional_thickness_are_valid`, `test_ac_u07_3_write_failure_preserves_draft_existing_notes_and_retry`, `test_ac_u07_3_replace_failure_preserves_records_draft_and_retry`, `test_ac_u07_3_corrupt_store_is_reported_and_not_overwritten`, `test_ac_u07_3_unreadable_store_is_reported_and_not_overwritten`.
+- Commits: red `b237c6e4f` → green `cc7de39d2` → regression `fe578a3b3` → fix `7c0d6e158` → regression `1b1a3f88d` → fix `dd0e57a31`.
+- Review: round 1 CHANGES_REQUIRED → round 2 PASS; 2 findings (2 fixed, 0 rejected, 0 deferred). Evidence: [U07 review](engineering/evidence/U07-review.md).
+- Overrides: restart fixture round-trips temporary real settings instead of recreating the ignore-settings fixture; original assertions preserved, justified by the persisted identity contract.
+- Deferred: first-session crash before identifier configuration save can orphan local notes requiring manual recovery; this limitation is documented. No remaining review findings.
+- Verification: final orchestration passed 633 core tests (48.102s), 72 combined GUI tests (1.290s), Ruff (Python 3.7 target), and translation check with English fallback/no locale edits. Independent review passed 23 focused GUI tests (0.847s), Ruff, and lifecycle probes.
+- Publish checkpoint: `dd0e57a31` plus this record, ready for the authorized fork publication.
 
 ### U02 uv desktop setup — 2026-10-17
 
