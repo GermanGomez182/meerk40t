@@ -15,7 +15,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | U05 | Read-only job summary | U04 | done |
 | U06 | Passive connection diagnosis | U05 | done |
 | U07 | Local material test notes | U06 | done |
-| U08 | Preview and framing context | U07 | todo |
+| U08 | Preview and framing context | U07 | in-progress |
 | U09 | Read-only design/import audit | U08 | todo |
 | U10 | Reliable autosave and measured reports | U09 | todo |
 

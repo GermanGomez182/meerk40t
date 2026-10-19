@@ -1,7 +1,7 @@
 ---
 id: U08
 title: Preview and framing context
-status: todo
+status: in-progress
 depends_on: [U07]
 requirements: [R6]
 invariants: [I1, I3, I7]
