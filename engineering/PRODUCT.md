@@ -19,7 +19,9 @@ Material notes open in a separate managed Material Notes window from the
 companion's Materials group. The window is bound to the device displayed when
 opened, so switching the active device does not redirect an unsaved draft. Its
 form has Material, Thickness (mm), Settings tried, and Observed result fields.
-Material and result are required; thickness may be blank or a finite nonnegative
+Records use a persisted device identifier alongside its service path, so deleting
+and recreating a device at the same path does not inherit the deleted device's
+observations. Material and result are required; thickness may be blank or a finite nonnegative
 number. Saving records an observation locally and never applies machine settings.
 
 ## Invariants

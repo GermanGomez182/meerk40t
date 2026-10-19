@@ -31,3 +31,14 @@ draft for the clearly displayed device during an active-device switch.
 Over: mixing editable notes into the report text or redirecting a draft silently.
 Cost: an additional local window, using existing geometry and tool registration.
 
+## D6: Distinguish device incarnations in material notes
+
+Why: normal device creation reuses deleted devices' service paths; a path alone
+can expose the deleted machine's observations to a replacement.
+Use a persisted per-device material_notes_id alongside the service path. A
+surviving device restores its identifier from settings across restarts; a newly
+created device receives a new identifier. Removed devices' note files remain
+local for manual recovery. Never automatically associate old path-only notes
+with a replacement.
+Cost: the restart test fixture must restore the saved device identifier too.
+

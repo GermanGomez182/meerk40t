@@ -6,6 +6,7 @@ import os
 import tempfile
 from pathlib import Path
 from typing import Dict, List, Tuple
+from uuid import uuid4
 
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
@@ -21,7 +22,16 @@ class MaterialNotes(MWindow):
         super().__init__(520, 680, context, path, parent)
         device = getattr(context, "device", None)
         self.device_path = getattr(device, "path", "")
-        identity = hashlib.sha256(self.device_path.encode("utf-8")).hexdigest()
+        self.device_id = ""
+        if self.device_path:
+            device.setting(str, "material_notes_id", "")
+            if not device.material_notes_id:
+                device.material_notes_id = str(uuid4())
+                device.write_persistent("material_notes_id", device.material_notes_id)
+            self.device_id = device.material_notes_id
+        identity = hashlib.sha256(
+            json.dumps([self.device_path, self.device_id]).encode("utf-8")
+        ).hexdigest()
         self.store_path = (
             Path(context.kernel.os_information["WORKDIR"])
             / "material-notes"
@@ -110,8 +120,9 @@ class MaterialNotes(MWindow):
             return []
         if (
             not isinstance(data, dict)
-            or set(data) != {"device_path", "records"}
+            or set(data) != {"device_path", "material_notes_id", "records"}
             or data["device_path"] != self.device_path
+            or data["material_notes_id"] != self.device_id
             or not isinstance(data["records"], list)
         ):
             raise ValueError(
@@ -141,7 +152,11 @@ class MaterialNotes(MWindow):
             ) as stream:
                 temporary_path = Path(stream.name)
                 json.dump(
-                    {"device_path": self.device_path, "records": records},
+                    {
+                        "device_path": self.device_path,
+                        "material_notes_id": self.device_id,
+                        "records": records,
+                    },
                     stream,
                     ensure_ascii=False,
                     allow_nan=False,
