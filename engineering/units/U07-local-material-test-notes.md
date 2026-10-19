@@ -1,7 +1,7 @@
 ---
 id: U07
 title: Local material test notes
-status: todo
+status: in-progress
 depends_on: [U06]
 requirements: [R5]
 invariants: [I2, I4, I5]
