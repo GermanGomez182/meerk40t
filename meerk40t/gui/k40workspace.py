@@ -138,6 +138,9 @@ class K40WorkspacePanel(ScrolledPanel):
             else:
                 self.context(f"window toggle {name}\n")
         self.Layout()
+        self.FitInside()
+        if self.error.GetLabel():
+            self.ScrollChildIntoView(self.error)
 
     def on_refresh(self, event: wx.CommandEvent) -> None:
         self.refresh_data()
