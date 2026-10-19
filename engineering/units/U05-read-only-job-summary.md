@@ -1,7 +1,7 @@
 ---
 id: U05
 title: Read-only job summary
-status: in-progress
+status: done
 depends_on: [U04]
 requirements: [R3]
 invariants: [I1, I3, I7]

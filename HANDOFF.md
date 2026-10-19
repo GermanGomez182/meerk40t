@@ -36,10 +36,9 @@ engineering/CONVENTIONS.md and the next unit; avoid loading the old conversation
 - U02 uv desktop setup: complete, fresh-clone installation verified.
 - U03 readable ruler/action labels: complete, two-round review passed.
 - U04 managed K40 companion / shortcuts: complete and published.
-- U05 read-only job summary: implementation and final review passed; **record
-  step remains**. README already describes snapshot semantics. Complete the U05
-  iteration entry, set its unit/status-table entry done, inspect the evidence,
-  and commit the documentation before starting U06.
+- U05 read-only job summary: implementation, final review, and record step are
+  complete. README already describes snapshot semantics. U05 is done; publish
+  the completed checkpoint, then proceed to U06.
 - U05 commits: red `01ac49c97`, green `28a662982`, regression red `71d63381c`,
   fix `cb238f64f`. Clarified later-unit contracts are in `4d4e5c17c`.
 - U05 round 1 found invalid RectNode bounds crashing refresh and malformed
@@ -49,32 +48,31 @@ engineering/CONVENTIONS.md and the next unit; avoid loading the old conversation
 
 ## Pending roadmap, in order
 
-1. **Finish U05 record and publish** the completed checkpoint if appropriate.
-2. **U06 passive connection diagnosis**: draft
+1. **U06 passive connection diagnosis**: draft
    `testgui/test_gui_k40connection.py` has 11 methods. Orchestrator verified all
    11 fail assertions for missing diagnosis, not fixture/import failures.
    Commit red plus in-progress status, then implement in k40reports.py and
    k40workspace.py. USB `is_connected()` reads a local handle only; TCP socket
    presence remains unverified; mock never reads USB. Show software pause/queue,
    errors and next steps; physical state/tube output remain unknown. See Q9.
-3. **U07 local material notes**: draft `testgui/test_gui_materialnotes.py`,
+2. **U07 local material notes**: draft `testgui/test_gui_materialnotes.py`,
    seven methods, test author reports nine expected missing-registration
    assertion failures. Orchestrator still needs to inspect and reproduce red.
    Separate managed `MaterialNotes` window, linked from companion; local JSON
    scoped by stable device path, bound to device at opening. Required material
    and result; thickness blank or finite nonnegative. Inline visible errors,
    retain draft and old records on failure. See Q10 and D5.
-4. **U08 preview/framing context**: draft `testgui/test_gui_k40preview.py`,
+3. **U08 preview/framing context**: draft `testgui/test_gui_k40preview.py`,
    ten methods. Author was interrupted by usage limit; **no final validated
    report**, so inspect and run it before accepting red. Scene origin/bounds,
    home corner and explicitly estimated enabled-operation duration; any missing
    estimate makes total unavailable. Explicit Simulation prepares a free plan
    with `clear copy preprocess validate blob finish` then opens Simulation,
    never spools. Framing access only opens existing laser controls.
-5. **U09 read-only design/import audit**: spec only, no tests or implementation.
+4. **U09 read-only design/import audit**: spec only, no tests or implementation.
    Dimensions, out-of-bed placement, unassigned elements, exact duplicate vector
    geometry plus transform. No automatic modification or deletion.
-6. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
+5. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
    eight methods. Earlier red: five failing methods / seven subcases, three
    controls pass; re-run when this unit starts. Existing Autosaver loses dirty
    state and may corrupt the normal recovery path on failed saves. Stage a
