@@ -44,6 +44,7 @@ class K40WorkspacePanel(ScrolledPanel):
                 (
                     (_("Material library"), "window/MatManager", False),
                     (_("Material test"), "window/Templatetool", False),
+                    (_("Material notes"), "window/MaterialNotes", False),
                 ),
             ),
             (_("Document checks"), ((_("Properties"), "window/Properties", False),)),

@@ -10,6 +10,7 @@ from wx import aui
 from meerk40t.core.units import Length
 from meerk40t.gui.consolepanel import Console
 from meerk40t.gui.k40workspace import K40Workspace
+from meerk40t.gui.materialnotes import MaterialNotes
 from meerk40t.gui.navigationpanels import Navigation
 from meerk40t.gui.spoolerpanel import JobSpooler
 
@@ -1130,6 +1131,7 @@ class wxMeerK40t(wx.App, Module):
         kernel.register("window/MatManager", MaterialManager)
         kernel.register("window/Navigation", Navigation)
         kernel.register("window/K40Workspace", K40Workspace)
+        kernel.register("window/MaterialNotes", MaterialNotes)
         kernel.register("window/Notes", Notes)
         kernel.register("window/AutoExec", AutoExec)
         kernel.register("window/JobSpooler", JobSpooler)

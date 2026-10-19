@@ -118,6 +118,21 @@ software queue does not confirm that a physical job has finished. Connection
 errors and inaccessible status values appear with a next step while the other
 reports and tools remain available. Use **Refresh** to collect a new snapshot.
 
+Open **Material notes** from the companion's Materials group, or use
+`window toggle MaterialNotes`. The separate window stays bound to the displayed
+device even if you select another machine. Enter a Material and Observed result;
+Thickness (mm) is optional and must be finite and nonnegative when supplied.
+Settings tried is free text. **Save** records the observation and clears the form;
+it never applies settings or runs a test. Material library and Material test open
+the established tools without applying presets or starting a job.
+
+Notes reload by the device's stable service path, independently of its label.
+They are local JSON files in the `material-notes` directory under MeerK40t's
+application work directory. Saves replace the file atomically and preserve notes
+saved by other open windows. Save or load errors appear in the window; a failed
+save retains the draft and previous records so you can correct permissions and
+retry. A corrupt file must be repaired or recovered from your backup before saving.
+
 The wxMeerK40t is the GUI and is written in wxPython. We use AUI to allow to have a very highly configurable UI. We can easily add panes and tools and there are quite a few available already.
 
 See [ROADMAP.md](ROADMAP.md) for proposed improvements to this fork's macOS and
