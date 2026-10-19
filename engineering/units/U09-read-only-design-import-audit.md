@@ -1,7 +1,7 @@
 ---
 id: U09
 title: Read-only design/import audit
-status: todo
+status: in-progress
 depends_on: [U08]
 requirements: [R7]
 invariants: [I1, I2, I7]

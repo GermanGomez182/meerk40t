@@ -42,3 +42,21 @@ local for manual recovery. Never automatically associate old path-only notes
 with a replacement.
 Cost: the restart test fixture must restore the saved device identifier too.
 
+## D7: Keep audit warnings exact and conservative
+
+Per QUESTIONS.md Q6, duplicate warnings require identical vector segment
+sequences and the same current transform. Bounds alone do not establish a
+duplicate. No tolerance, reversed-path matching, or alternate path encoding
+normalization is attempted. Styling does not change vector geometry, and the
+audit never deletes anything.
+
+Assignment means an element has a reference in the operation tree, including
+disabled operations and nested effects. Other references do not establish job
+assignment. Report labels with IDs or document indices so unlabeled or similarly
+named elements remain identifiable. Unsupported checks report their limitations
+without discarding supported bounds or assignment checks.
+
+Why: makes the first slice predictable and read-only without inventing import
+repair semantics. Cost: equivalent geometry encoded differently can remain
+unflagged, and a reference to a disabled operation still counts as assigned.
+
