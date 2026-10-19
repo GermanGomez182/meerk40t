@@ -130,10 +130,10 @@ def build_connection_report(context: Context, translate: Callable[[str], str]) -
         "Check the USB cable and controller; review the Controller window, then refresh."
     )
     try:
-        if getattr(device, "mock", False):
-            transport = _("Mock transport — no hardware connection observed")
-        elif getattr(device, "networked", False):
+        if getattr(device, "networked", False):
             transport = _("Network / TCP connection: unverified (no socket probing)")
+        elif getattr(device, "mock", False):
+            transport = _("Mock transport — no hardware connection observed")
         else:
             controller = getattr(device, "controller", None)
             connection = getattr(controller, "connection", None)

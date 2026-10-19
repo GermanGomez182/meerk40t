@@ -109,7 +109,8 @@ Missing or invalid values are shown as **Unavailable**. Click **Refresh** after
 editing the artwork or settings to rebuild the snapshot.
 
 The passive connection snapshot shows USB connection state from the existing
-local handle, mock mode, or an **unverified** network connection. It never opens
+local handle, mock mode, or an **unverified** network connection. Network mode
+takes precedence when both network and mock settings are enabled. It never opens
 USB, probes a socket, or sends a machine command. Software controller state,
 driver pause and queue size are separate observations; unavailable state stays
 **Unknown**. Physical position and tube output remain unknown, and an empty
