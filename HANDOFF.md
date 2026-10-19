@@ -1,5 +1,8 @@
 # Resume the Mac / K40 roadmap
 
+Resumed on 2026-10-18 with fresh role agents. U05 was recorded and published;
+U06 is complete with final review evidence. Next unit: U07.
+
 Paused at the user's request on 2026-10-18 to reduce token use and update the
 workflow. Resume in a new session so the updated skill loads. No product agents
 should continue running. Start by reading this file, AGENTS.md, ITERATIONS.md,
@@ -21,8 +24,10 @@ engineering/CONVENTIONS.md and the next unit; avoid loading the old conversation
 ## Git and launch
 
 - Branch: `fix/macos-workspace-readability`.
-- Product HEAD before this handoff: `cb238f64f` (U05 review fixes).
-- Last published fork branch: `86cda5117` (U04); U05 is local only.
+- Product implementation: `c9d42a83a` (U06 review fixes). The following
+  documentation commit records completion.
+- Published checkpoint before this record: `a578484ca` (U05). Publish the U06
+  documentation checkpoint, then begin U07.
 - `origin` is upstream; `fork` is the user's GitHub fork.
 - Run: `uv sync --locked`, then `uv run meerk40t`.
 - Companion: **Tools → Tools → K40 Workspace**, or console
@@ -36,9 +41,10 @@ engineering/CONVENTIONS.md and the next unit; avoid loading the old conversation
 - U02 uv desktop setup: complete, fresh-clone installation verified.
 - U03 readable ruler/action labels: complete, two-round review passed.
 - U04 managed K40 companion / shortcuts: complete and published.
-- U05 read-only job summary: implementation, final review, and record step are
-  complete. README already describes snapshot semantics. U05 is done; publish
-  the completed checkpoint, then proceed to U06.
+- U05 read-only job summary: complete and published at `a578484ca`.
+- U06 passive connection diagnosis: complete; both review findings fixed and
+  round 2 passed. Evidence: `engineering/evidence/U06-review.md`. Publish this
+  completed checkpoint, then proceed to U07.
 - U05 commits: red `01ac49c97`, green `28a662982`, regression red `71d63381c`,
   fix `cb238f64f`. Clarified later-unit contracts are in `4d4e5c17c`.
 - U05 round 1 found invalid RectNode bounds crashing refresh and malformed
@@ -48,31 +54,24 @@ engineering/CONVENTIONS.md and the next unit; avoid loading the old conversation
 
 ## Pending roadmap, in order
 
-1. **U06 passive connection diagnosis**: draft
-   `testgui/test_gui_k40connection.py` has 11 methods. Orchestrator verified all
-   11 fail assertions for missing diagnosis, not fixture/import failures.
-   Commit red plus in-progress status, then implement in k40reports.py and
-   k40workspace.py. USB `is_connected()` reads a local handle only; TCP socket
-   presence remains unverified; mock never reads USB. Show software pause/queue,
-   errors and next steps; physical state/tube output remain unknown. See Q9.
-2. **U07 local material notes**: draft `testgui/test_gui_materialnotes.py`,
+1. **U07 local material notes**: draft `testgui/test_gui_materialnotes.py`,
    seven methods, test author reports nine expected missing-registration
    assertion failures. Orchestrator still needs to inspect and reproduce red.
    Separate managed `MaterialNotes` window, linked from companion; local JSON
    scoped by stable device path, bound to device at opening. Required material
    and result; thickness blank or finite nonnegative. Inline visible errors,
-   retain draft and old records on failure. See Q10 and D5.
-3. **U08 preview/framing context**: draft `testgui/test_gui_k40preview.py`,
+   retain draft and old records on failure. See D5 in `engineering/decisions.md`.
+2. **U08 preview/framing context**: draft `testgui/test_gui_k40preview.py`,
    ten methods. Author was interrupted by usage limit; **no final validated
    report**, so inspect and run it before accepting red. Scene origin/bounds,
    home corner and explicitly estimated enabled-operation duration; any missing
    estimate makes total unavailable. Explicit Simulation prepares a free plan
    with `clear copy preprocess validate blob finish` then opens Simulation,
    never spools. Framing access only opens existing laser controls.
-4. **U09 read-only design/import audit**: spec only, no tests or implementation.
+3. **U09 read-only design/import audit**: spec only, no tests or implementation.
    Dimensions, out-of-bed placement, unassigned elements, exact duplicate vector
    geometry plus transform. No automatic modification or deletion.
-5. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
+4. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
    eight methods. Earlier red: five failing methods / seven subcases, three
    controls pass; re-run when this unit starts. Existing Autosaver loses dirty
    state and may corrupt the normal recovery path on failed saves. Stage a
@@ -82,8 +81,14 @@ engineering/CONVENTIONS.md and the next unit; avoid loading the old conversation
 
 ## Verification already observed
 
-- Latest product run: **633 core tests passed in 46.978s** after U05 fixes.
-- Combined GUI suite: **46 tests passed** (14 summary, 11 companion, existing
+- U06 final orchestration: 633 core tests passed (43.954s), 60 GUI tests passed
+  (0.946s), runtime Ruff with Python 3.7 target passed, and translation check
+  exited 0 with English fallback and no locale edits. Independent review passed
+  633 core tests (45.057s), 39 focused GUI tests, and Ruff. Review evidence:
+  [U06 review](engineering/evidence/U06-review.md).
+
+- Earlier U05 run: **633 core tests passed in 46.978s** after U05 fixes.
+- U05 combined GUI suite: **46 tests passed** (14 summary, 11 companion, existing
   workspace-color and readability suites).
 - Independent final review: 14 summary tests passed; round 1 independently ran
   all 633 core tests. Runtime Ruff passed with `--target-version py37`.
@@ -98,8 +103,8 @@ engineering/CONVENTIONS.md and the next unit; avoid loading the old conversation
 
 ## Files to preserve
 
-- Four prepared, untracked test files: k40connection, materialnotes, k40preview,
-  autosave under testgui; commit each only at that unit's verified red step.
+- Three prepared, untracked test files: materialnotes, k40preview, autosave
+  under testgui; commit each only at that unit's verified red step.
 - `.DS_Store` is preexisting user data; leave it untracked and untouched.
 - U05 evidence had uncommitted verification additions when this handoff began.
   This handoff also saves the final round-2 report so it survives a restart.

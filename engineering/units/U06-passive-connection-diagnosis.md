@@ -1,7 +1,7 @@
 ---
 id: U06
 title: Passive connection diagnosis
-status: in-progress
+status: done
 depends_on: [U05]
 requirements: [R4]
 invariants: [I1, I3, I5]

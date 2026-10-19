@@ -13,7 +13,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | U03 | Readable workspace labels | U02 | done |
 | U04 | Focused K40 companion workspace | U03 | done |
 | U05 | Read-only job summary | U04 | done |
-| U06 | Passive connection diagnosis | U05 | in-progress |
+| U06 | Passive connection diagnosis | U05 | done |
 | U07 | Local material test notes | U06 | todo |
 | U08 | Preview and framing context | U07 | todo |
 | U09 | Read-only design/import audit | U08 | todo |
@@ -72,6 +72,17 @@ Spec-to-units was skipped because this is a single-slice change; verify-gate was
 - Overrides: none.
 - Deferred: none.
 - Verification: 633 core tests and 46 combined GUI tests passed in the fresh verification run; runtime Ruff with Python 3.7 target and translation check passed, as recorded in U05 review evidence.
+
+### U06 Passive connection diagnosis — 2026-10-18
+
+- Shipped: AC-U06-1 passively reports transport and connection state; tests: `test_ac_u06_1_unopened_usb_is_disconnected_without_probe`, `test_ac_u06_1_closed_usb_handle_is_disconnected_without_probe`, `test_ac_u06_1_open_usb_handle_reports_local_connected_state`, `test_ac_u06_1_mock_mode_does_not_read_hardware_connection_getter`, `test_ac_u06_1_network_socket_presence_is_unverified`, `test_ac_u06_1_network_transport_takes_precedence_over_mock_mode`.
+- Shipped: AC-U06-2 reports software pause and queue while leaving physical progress unknown; tests: `test_ac_u06_2_software_pause_and_queue_do_not_claim_physical_progress`, `test_ac_u06_2_missing_controller_state_remains_unknown`, `test_ac_u06_2_driver_pause_is_reported_when_controller_is_idle`, `test_ac_u06_2_missing_software_queue_remains_unknown`.
+- Shipped: AC-U06-3 keeps diagnosis available with actionable connection/status errors and generic tools; tests: `test_ac_u06_3_connection_errors_show_count_and_relevant_next_step`, `test_ac_u06_3_inaccessible_status_shows_error_and_keeps_report_available`, `test_ac_u06_3_switch_to_unsupported_device_drops_previous_diagnosis`, `test_ac_u06_3_no_active_device_keeps_generic_tools_available`.
+- Commits: red `444a04de6` → green `41e83a724` → regression red `564077da2` → fix `c9d42a83a`.
+- Review: round 1 CHANGES_REQUIRED → round 2 PASS; 2 findings (2 fixed, 0 rejected, 0 deferred).
+- Overrides: none.
+- Deferred: none.
+- Verification: final orchestration passed 633 core tests (43.954s), 60 GUI tests (0.946s), and Ruff with Python 3.7 target; translation check exited 0 with English fallback and no locale changes. Independent review passed 633 core tests (45.057s), 39 focused GUI tests, and Ruff with Python 3.7 target. Evidence: [U06 review](engineering/evidence/U06-review.md).
 
 ### U02 uv desktop setup — 2026-10-17
 
