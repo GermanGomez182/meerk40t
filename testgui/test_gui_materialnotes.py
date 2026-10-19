@@ -165,7 +165,11 @@ class TestMaterialNotes(unittest.TestCase):
         self.assertEqual(self.stored_files(), {}, "Draft input must not save itself")
         self.save(window)
         self.assertTrue(self.stored_files(), "Explicit save must create local JSON")
+        settings_path = Path(self.directory.name, "fixture-settings.cfg")
+        self.first_device.flush()
+        self.context.kernel.write_configuration(settings_path)
         self.context = make_context("LihuiyuDevice")
+        self.context.kernel.read_configuration(settings_path)
         self.context.kernel.os_information["WORKDIR"] = self.directory.name
         self.context.gui = self.parent
         self.context.kernel.console = self.commands.append
@@ -177,6 +181,35 @@ class TestMaterialNotes(unittest.TestCase):
         self.assertEqual(self.commands, [])
         self.assertEqual(self.first_device.speed, 9.5)
         self.assertEqual(self.first_device.power, 321)
+
+    def test_ac_u07_2_reused_service_path_does_not_expose_deleted_machine_notes(
+        self,
+    ) -> None:
+        first = self.open_notes()
+        self.fill(first, material_name="Fixture deleted-machine observation")
+        self.save(first)
+        previous = self.stored_files()
+        self.second_device()
+        services = list(self.context.kernel.services("device"))
+        self.context.kernel.destroy_service_index(
+            "device", services.index(self.first_device)
+        )
+        replacement = Service(self.context.kernel, self.first_device.path)
+        replacement.name = "LihuiyuDevice"
+        replacement.label = self.first_device.label
+        self.context.kernel.add_service("device", replacement)
+        self.context.kernel.activate_service_path("device", replacement.path)
+        reopened = self.open_notes()
+        self.assertNotIn("Fixture deleted-machine observation", self.text(reopened))
+        self.assertEqual(self.stored_files(), previous)
+        self.fill(reopened, material_name="Fixture replacement-machine observation")
+        self.save(reopened)
+        report = self.text(self.open_notes())
+        self.assertIn("Fixture replacement-machine observation", report)
+        self.assertNotIn("Fixture deleted-machine observation", report)
+        for name, contents in previous.items():
+            self.assertEqual(self.stored_files()[name], contents)
+        self.assertEqual(self.commands, [])
 
     def test_ac_u07_2_machine_identity_isolates_notes_even_with_same_label(
         self,
@@ -311,6 +344,31 @@ class TestMaterialNotes(unittest.TestCase):
         self.assertNotIn("Fixture retryable draft", reopened)
         self.save(window)
         self.assertIn("Fixture retryable draft", self.text(self.open_notes()))
+        self.assertEqual(self.commands, [])
+
+    def test_ac_u07_3_replace_failure_preserves_records_draft_and_retry(self) -> None:
+        window = self.open_notes()
+        self.fill(window, material_name="Fixture prior atomic note")
+        self.save(window)
+        previous = self.stored_files()
+        self.fill(window, material_name="Fixture atomic retry draft")
+        draft = self.draft(window)
+        with patch(
+            "os.replace", side_effect=OSError("fixture atomic replacement failed")
+        ):
+            self.save(window)
+        self.assertEqual(self.stored_files(), previous)
+        self.assertEqual(self.draft(window), draft)
+        error = self.text(window, include_inputs=False).lower()
+        self.assertIn("atomic replacement failed", error)
+        self.assertRegex(error, r"check|retry|permission|file")
+        report = self.text(self.open_notes())
+        self.assertIn("Fixture prior atomic note", report)
+        self.assertNotIn("Fixture atomic retry draft", report)
+        self.save(window)
+        report = self.text(self.open_notes())
+        self.assertIn("Fixture prior atomic note", report)
+        self.assertIn("Fixture atomic retry draft", report)
         self.assertEqual(self.commands, [])
 
     def test_ac_u07_3_corrupt_store_is_reported_and_not_overwritten(self) -> None:
