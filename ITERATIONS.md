@@ -15,7 +15,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | U05 | Read-only job summary | U04 | done |
 | U06 | Passive connection diagnosis | U05 | done |
 | U07 | Local material test notes | U06 | done |
-| U08 | Preview and framing context | U07 | in-progress |
+| U08 | Preview and framing context | U07 | done |
 | U09 | Read-only design/import audit | U08 | todo |
 | U10 | Reliable autosave and measured reports | U09 | todo |
 
@@ -94,6 +94,17 @@ Spec-to-units was skipped because this is a single-slice change; verify-gate was
 - Deferred: first-session crash before identifier configuration save can orphan local notes requiring manual recovery; this limitation is documented. No remaining review findings.
 - Verification: final orchestration passed 633 core tests (48.102s), 72 combined GUI tests (1.290s), Ruff (Python 3.7 target), and translation check with English fallback/no locale edits. Independent review passed 23 focused GUI tests (0.847s), Ruff, and lifecycle probes.
 - Publish checkpoint: `dd0e57a31` plus this record, ready for the authorized fork publication.
+
+### U08 Preview and framing context — 2026-10-19
+
+- Shipped: AC-U08-1 reports scene origin (0, 0 mm), configured home corner, transformed design bounds, and software duration summed only from enabled operation estimates; unknown or invalid enabled estimates make the total unavailable. Tests: `test_ac_u08_1_preview_explains_scene_origin_home_corner_and_design_bounds`, `test_ac_u08_1_duration_sums_enabled_real_operation_estimates_only`, `test_ac_u08_1_refresh_recomputes_estimate_without_document_or_queue_edits`, `test_ac_u08_1_disabled_unknown_estimate_does_not_poison_total`, `test_ac_u08_1_real_raster_estimate_preserves_references_and_selection`, `test_ac_u08_1_missing_configured_home_remains_unavailable`, `test_ac_u08_3_missing_or_malformed_operation_estimate_is_unavailable`, `test_ac_u08_3_one_unknown_enabled_estimate_prevents_a_partial_total`, `test_ac_u08_3_estimator_arithmetic_error_is_visible_and_preserves_document`.
+- Shipped: AC-U08-2 prepares an explicit simulation through the existing free-plan pipeline and opens only after completion; missing planner/window support and validation failure remain visible without spooling or hardware commands. Tests: `test_ac_u08_2_simulation_uses_free_plan_preparation_and_never_spools`, `test_ac_u08_2_missing_planner_shows_inline_error_without_commands`, `test_ac_u08_2_missing_simulation_window_does_not_prepare_a_plan`, `test_ac_u08_2_real_pipeline_finishes_cutcode_before_simulation_opens`, `test_ac_u08_2_validation_failure_does_not_open_simulation`.
+- Shipped: AC-U08-3 reports empty/unknown states and opens existing framing controls only; missing framing errors scroll into view. Tests: `test_ac_u08_3_empty_document_reports_unavailable_bounds_and_estimate`, `test_ac_u08_3_framing_shortcut_only_opens_existing_laser_controls`, `test_ac_u08_3_missing_framing_pane_shows_inline_error_without_commands`, `test_ac_u08_3_missing_framing_pane_error_is_readable_after_scrolling`.
+- Commits: red `c4b1dce9f` → green `4e9a92f6c` → test `2d3b0e285` → fix `d34b181c9`.
+- Review: round 1 CHANGES_REQUIRED → round 2 PASS; 1 finding (1 fixed, 0 rejected, 0 deferred). Evidence: [U08 review](engineering/evidence/U08-review.md).
+- Overrides: none.
+- Deferred: none. Next U09 is a read-only design/import audit, spec-only.
+- Verification: orchestration passed 633 core tests (44.342s), 90 combined GUI tests (1.947s), Ruff for Python 3.7, diff checks, and translation check (exit 0; English fallback, no locale edits). Independent review passed 633 core tests (44.252s) in round one, then 29 focused GUI tests (0.962s), Ruff, whitespace checks, and viewport probe (error moved to y=12 with no commands) in round two. Final post-review reruns passed 633 core tests (44.424s) and 29 focused GUI tests (1.025s).
 
 ### U02 uv desktop setup — 2026-10-17
 

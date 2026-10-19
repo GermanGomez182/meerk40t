@@ -1,9 +1,10 @@
 # Resume the Mac / K40 roadmap
 
-Current checkpoint: U07 completed and reviewed on 2026-10-19. The next unit is
-U08. The current branch is `fix/macos-workspace-readability`; the U07 product
-head is `dd0e57a31`, followed by the documentation record. Before beginning U08,
-confirm the fork contains the complete checkpoint and publish it if needed.
+Current checkpoint: U08 completed and reviewed on 2026-10-19. The current
+branch is `fix/macos-workspace-readability`; U08 fix commit is `d34b181c9`,
+followed by the documentation record. Confirm the fork contains this complete
+checkpoint before starting U09. Final post-review verification passed 633 core
+tests (44.424s) and 29 focused GUI tests (1.025s).
 
 ## Working agreements
 
@@ -21,7 +22,7 @@ confirm the fork contains the complete checkpoint and publish it if needed.
 ## Git and launch
 
 - Branch: `fix/macos-workspace-readability`.
-- U07 product head: `dd0e57a31`, followed by its documentation record.
+- U08 product head: `d34b181c9`, followed by its documentation record.
 - `origin` is upstream; `fork` is the user's GitHub fork.
 - Run: `uv sync --locked`, then `uv run meerk40t`.
 - Companion: **Tools → Tools → K40 Workspace**, or console
@@ -42,20 +43,17 @@ confirm the fork contains the complete checkpoint and publish it if needed.
   findings fixed. Evidence: [U07 review](engineering/evidence/U07-review.md).
   The first-session crash before identifier configuration is saved can orphan
   local notes that need manual recovery; README documents this limit.
+- U08 preview and framing context: complete; round 2 PASS, the offscreen framing
+  error finding was fixed. Evidence: [U08 review](engineering/evidence/U08-review.md).
+  Simulation opens only after free-plan preparation; framing access opens
+  existing laser controls only.
 
 ## Pending roadmap, in order
 
-1. **U08 preview/framing context**: draft `testgui/test_gui_k40preview.py`, ten
-   methods. Author was interrupted by usage limit; no final validated report,
-   so inspect and run it when U08 starts. Scene origin/bounds, home corner and
-   explicitly estimated enabled-operation duration; any missing estimate makes
-   total unavailable. Explicit Simulation prepares a free plan with
-   `clear copy preprocess validate blob finish` then opens Simulation, never
-   spools. Framing access only opens existing laser controls.
-2. **U09 read-only design/import audit**: spec only, no tests or implementation.
+1. **U09 read-only design/import audit**: spec only, no tests or implementation.
    Dimensions, out-of-bed placement, unassigned elements, exact duplicate
    vector geometry plus transform. No automatic modification or deletion.
-3. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
+2. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
    eight methods. Earlier red: five failing methods / seven subcases, three
    controls pass; re-run when this unit starts. Existing Autosaver loses dirty
    state and may corrupt the normal recovery path on failed saves. Stage a
@@ -65,6 +63,12 @@ confirm the fork contains the complete checkpoint and publish it if needed.
 
 ## Verification already observed
 
+- U08 orchestration passed 633 core tests (44.342s), 90 combined GUI tests
+  (1.947s), Ruff with Python 3.7 target, whitespace checks, and translation
+  checking with English fallback/no locale edits. Final post-review reruns
+  passed 633 core tests (44.424s) and 29 focused GUI tests (1.025s). Independent
+  review passed 633 core tests in round one and 29 focused GUI tests plus the
+  viewport probe in round two. Evidence: [U08 review](engineering/evidence/U08-review.md).
 - U07 final orchestration passed 633 core tests (48.102s), 72 combined GUI
   tests (1.290s), runtime Ruff with Python 3.7 target, and translation check
   with English fallback/no locale edits. Independent review passed 23 focused
@@ -82,8 +86,8 @@ confirm the fork contains the complete checkpoint and publish it if needed.
 
 ## Files to preserve
 
-- Prepared untracked test drafts: `testgui/test_gui_k40preview.py` and
-  `testgui/test_gui_autosave.py`; commit each only at its verified red step.
+- Prepared untracked test draft: `testgui/test_gui_autosave.py`; commit only at
+  its verified red step.
 - `.DS_Store` is user data; leave it untracked and untouched.
 - Do not discard untracked files or unrelated user changes.
 
