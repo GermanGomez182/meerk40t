@@ -1,6 +1,7 @@
 # Python 3.6 cannot use postponed annotations or subscript built-in collections.
 # ruff: noqa: FA100
 from math import isfinite
+from re import fullmatch
 from typing import Callable, Optional
 
 from meerk40t.core.units import UNITS_PER_MM, Length
@@ -188,3 +189,64 @@ def build_connection_report(context: Context, translate: Callable[[str], str]) -
         lines.append(next_step)
     lines.extend((_("Physical position: unknown"), _("Tube output: unknown")))
     return "\n".join(lines)
+
+
+def _software_duration(elements: object, translate: Callable[[str], str]) -> str:
+    _ = translate
+    unavailable = _("Unavailable")
+    if elements is None:
+        return unavailable
+    total = 0
+    found = False
+    for operation in elements.ops():
+        if not getattr(operation, "output", True):
+            continue
+        found = True
+        estimate = getattr(operation, "time_estimate", None)
+        if not callable(estimate):
+            return unavailable
+        try:
+            duration = estimate()
+        except (
+            ArithmeticError,
+            AttributeError,
+            OSError,
+            RuntimeError,
+            TypeError,
+            ValueError,
+        ) as error:
+            return _("Unavailable — estimation error: {error}").format(error=error)
+        if (
+            not isinstance(duration, str)
+            or fullmatch(r"[0-9]+:[0-5][0-9]:[0-5][0-9]", duration) is None
+        ):
+            return unavailable
+        hours, minutes, seconds = (int(part) for part in duration.split(":"))
+        total += hours * 3600 + minutes * 60 + seconds
+    if not found:
+        return unavailable
+    hours, remainder = divmod(total, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{hours}:{minutes:02d}:{seconds:02d}"
+
+
+def build_preview_report(context: Context, translate: Callable[[str], str]) -> str:
+    _ = translate
+    unavailable = _("Unavailable")
+    device = getattr(context, "device", None)
+    elements = getattr(context, "elements", None)
+    return "\n".join(
+        (
+            _("Scene origin: 0, 0 mm"),
+            _("Configured home corner: {corner}").format(
+                corner=_(getattr(device, "home_corner", None) or unavailable)
+            ),
+            _("Physical position: unknown"),
+            _("Scene-space design bounds: {bounds}").format(
+                bounds=_design_bounds(elements, unavailable)
+            ),
+            _("Software duration estimate: {duration}").format(
+                duration=_software_duration(elements, _)
+            ),
+        )
+    )

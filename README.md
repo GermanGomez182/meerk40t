@@ -108,6 +108,15 @@ passes. The power value is a controller setting, not a measurement of tube outpu
 Missing or invalid values are shown as **Unavailable**. Click **Refresh** after
 editing the artwork or settings to rebuild the snapshot.
 
+Preview and framing shows scene origin (0, 0 mm), the configured home corner,
+scene-space design bounds, and a **Software duration estimate** summed from enabled
+operations. Missing or invalid estimates make the total **Unavailable**; the
+estimate does not establish actual runtime or physical position. **Simulation**
+prepares a separate plan through the existing planning pipeline and opens the
+simulation only after preparation succeeds, without spooling it. Missing support
+or preparation failures appear in the window. **Framing controls** opens the
+existing laser-controls pane; it does not run an outline or move the machine.
+
 The passive connection snapshot shows USB connection state from the existing
 local handle, mock mode, or an **unverified** network connection. Network mode
 takes precedence when both network and mock settings are enabled. It never opens
