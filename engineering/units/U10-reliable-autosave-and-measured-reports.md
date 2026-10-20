@@ -1,7 +1,7 @@
 ---
 id: U10
 title: Reliable autosave and measured reports
-status: in-progress
+status: done
 depends_on: [U09]
 requirements: [R8]
 invariants: [I2, I4, I5]

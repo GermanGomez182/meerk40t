@@ -17,7 +17,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | U07 | Local material test notes | U06 | done |
 | U08 | Preview and framing context | U07 | done |
 | U09 | Read-only design/import audit | U08 | done |
-| U10 | Reliable autosave and measured reports | U09 | in-progress |
+| U10 | Reliable autosave and measured reports | U09 | done |
 
 ## Iteration log
 
@@ -116,6 +116,18 @@ Spec-to-units was skipped because this is a single-slice change; verify-gate was
 - Overrides: none.
 - Deferred: no approximate, reversed-path, or alternate-matrix duplicate matching; equivalent geometry in other encodings is not flagged, per D7.
 - Verification: orchestration passed 633 core tests (49.265s), 102 combined GUI tests (3.014s), Ruff with Python 3.7 target, whitespace checks, and translation check (exit 0, English fallback, no locale edits). Independent review passed 633 core tests (58.967s) and 36 focused GUI tests (3.002s) in round one; round two passed 37 focused GUI tests (1.107s), 18 geometry probes, Ruff and whitespace checks. Final post-review reruns passed 633 core tests (47.352s) and 37 focused GUI tests (1.029s).
+
+### U10 Reliable autosave and measured reports — 2026-10-20
+
+- Shipped: AC-U10-1 reports failed autosaves visibly, retains dirty state, and retries; tests: `test_ac_u10_1_failed_save_keeps_workspace_dirty`, `test_ac_u10_1_save_failure_surfaces_actionable_error`, `test_ac_u10_1_next_job_retries_failed_dirty_workspace`, `test_ac_u10_1_false_save_result_is_visible_retryable_failure`.
+- Shipped: AC-U10-2 stages a complete `replacement.svg` and atomically publishes it while preserving prior recovery through writer, history, and publication failures; false writer results fail, dirty state clears only on success, and six prior `.bak`/`.ba1`–`.ba5` versions are retained. Tests: `test_ac_u10_2_failed_replacement_preserves_original_recovery_file`, `test_ac_u10_2_failed_first_save_does_not_publish_partial_recovery`, `test_ac_u10_2_success_clears_dirty_only_after_complete_save`, `test_ac_u10_2_failed_publication_preserves_recovery_and_retries`, `test_ac_u10_2_history_failures_are_visible_and_retryable`, `test_ac_u10_2_real_svg_writer_keeps_recovery_until_loadable_replacement`.
+- Shipped: AC-U10-3 skips saving when autosave is disabled or the workspace is clean, with bounded history; test: `test_ac_u10_3_disabled_or_clean_workspace_is_not_saved`, plus `test_ac_u10_3_successful_history_keeps_only_six_prior_versions`.
+- Shipped: AC-U10-4 profiles 500- and 4,000-element synthetic documents with 40 operations and 375/3,000 references; five warm samples total about 63/513 ms, repeated report hashes match, and no optimization was introduced. Diagnostic utility verification used direct execution and output comparisons: `engineering/profile_reports.py` and [U10 report measurements](engineering/evidence/U10-report-profile.md).
+- Commits: red `17c2c1705` → green `def59e2e3`.
+- Review: round 1 PASS; 0 findings (0 fixed, 0 rejected, 0 deferred). Evidence: [U10 review](engineering/evidence/U10-review.md).
+- Overrides: none.
+- Deferred: broader Mac icon/toolbar polish, real-file and raster performance profiling, and physical hardware checks remain optional backlog. U07 first-configuration-save crash can orphan notes requiring manual recovery.
+- Verification: review round passed 633 core tests (45.949s) and 24 focused GUI tests (0.811s), with permission-denial, ValueError, cleanup-failure, and retry probes; independent profile repetitions matched all hashes. Orchestration passed 633 core tests (46.466s), 114 combined GUI tests (2.891s), translation check (English fallback, no locale edits), Ruff checks, and Python 3.7-target isolated Autosaver lint. Final post-review reruns passed 633 core tests (46.355s) and 114 GUI tests (2.673s). Fresh local checkout of `def59e2e3` installed with locked dependencies and passed CLI, isolated editable-source, 12 autosave tests (0.258s), and profiling smoke checks, leaving the checkout clean.
 
 ### U02 uv desktop setup — 2026-10-17
 

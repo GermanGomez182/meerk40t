@@ -1,10 +1,12 @@
 # Resume the Mac / K40 roadmap
 
-Current checkpoint: U09 completed and reviewed on 2026-10-20. The current
-branch is `fix/macos-workspace-readability`; U09 product head is `fb1ae759a`,
-followed by this documentation record. Final post-review reruns passed 633 core
-tests (47.352s) and 37 focused GUI tests (1.029s). Confirm the fork contains the
-complete checkpoint before starting U10.
+Current checkpoint: U10 completed and reviewed on 2026-10-20. The current
+branch is `fix/macos-workspace-readability`; product head is `def59e2e3`, followed
+by this documentation record. U03–U10 first slices are accepted and complete;
+U01/U02 groundwork is done. Final post-review verification passed 633 core tests
+and 114 GUI tests. A fresh local checkout installed and passed the CLI,
+editable-source, 12 autosave tests and profiling utility smoke checks. Confirm
+the fork contains this complete checkpoint when resuming.
 
 ## Working agreements
 
@@ -13,8 +15,8 @@ complete checkpoint before starting U10.
 - Role-separated TDD; tests unchanged after red except justified test commits.
 - Fresh agent contexts, narrow briefs, one unit at a time; strongest independent
   reviewer and cheapest scribe for records.
-- Do not start tests for additional units. Future tests below are drafts, not
-  accepted implementations.
+- No automatic units remain. Broader Mac icon/toolbar polish, real-file/raster
+  performance work, and physical hardware checks are optional backlog.
 - No hardware connection, movement, laser firing or spooling on report refresh.
 - User authorized publishing finished units to the fork. No upstream PR, merge,
   rebase, squash, amend or force-push.
@@ -22,7 +24,7 @@ complete checkpoint before starting U10.
 ## Git and launch
 
 - Branch: `fix/macos-workspace-readability`.
-- U09 product head: `fb1ae759a`, followed by this documentation record.
+- Final product head: `def59e2e3`, followed by this documentation record.
 - `origin` is upstream; `fork` is the user's GitHub fork.
 - Run: `uv sync --locked`, then `uv run meerk40t`.
 - Companion: **Tools → Tools → K40 Workspace**, or console
@@ -51,18 +53,23 @@ complete checkpoint before starting U10.
   coordinate handling fixed with regression coverage. Evidence:
   [U09 review](engineering/evidence/U09-review.md).
 
-## Pending roadmap, in order
+## U10 completion
 
-1. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
-   eight methods. Earlier red: five failing methods / seven subcases, three
-   controls pass; re-run when this unit starts. Existing Autosaver loses dirty
-   state and may corrupt the normal recovery path on failed saves. Stage a
-   complete replacement before publication; retain retryable dirty state,
-   actionable errors and six prior versions. Profile the new reports on a
-   deterministic large synthetic document; optimize only a measured problem.
+U10 red `17c2c1705` → green `def59e2e3`; round 1 review PASS with no findings.
+Autosave failures remain visible and retryable, replacement publication is
+atomic, and history retains six prior versions. Synthetic report measurements
+and hashes are recorded in [U10 profile evidence](engineering/evidence/U10-report-profile.md).
+Final post-review reruns and fresh-clone installation/smoke checks passed.
+No accepted units remain; additional work requires a selected follow-up scope.
 
 ## Verification already observed
 
+- U10 final verification passed 633 core tests (46.355s) and 114 combined GUI
+  tests (2.673s). Independent review passed 633 core tests, 24 focused GUI tests,
+  failure/retry probes and repeated profiling hashes. Fresh checkout of
+  `def59e2e3`: `uv sync --locked --group dev`, CLI version, isolated editable
+  import assertion, 12 autosave tests and profiling smoke all passed; checkout
+  stayed clean. Evidence: [U10 review](engineering/evidence/U10-review.md).
 - U09 orchestration passed 633 core tests (49.265s), 102 combined GUI tests
   (3.014s), Ruff with Python 3.7 target, whitespace checks, and translation
   checking (exit 0; English fallback, no locale edits). Independent review
@@ -94,8 +101,8 @@ complete checkpoint before starting U10.
 
 ## Files to preserve
 
-- Prepared untracked test draft: `testgui/test_gui_autosave.py`; commit only at
-  its verified red step.
+- Autosave tests in `testgui/test_gui_autosave.py` are tracked in the red commit;
+  the red and green commits are present on the branch.
 - `.DS_Store` is user data; leave it untracked and untouched.
 - Do not discard untracked files or unrelated user changes.
 
