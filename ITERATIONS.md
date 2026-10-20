@@ -17,7 +17,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | U07 | Local material test notes | U06 | done |
 | U08 | Preview and framing context | U07 | done |
 | U09 | Read-only design/import audit | U08 | done |
-| U10 | Reliable autosave and measured reports | U09 | todo |
+| U10 | Reliable autosave and measured reports | U09 | in-progress |
 
 ## Iteration log
 
