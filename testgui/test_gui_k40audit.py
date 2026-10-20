@@ -9,6 +9,7 @@ from meerk40t.core.geomstr import Geomstr
 from meerk40t.core.node.effect_hatch import HatchEffectNode
 from meerk40t.core.node.elem_image import ImageNode
 from meerk40t.core.node.elem_path import PathNode
+from meerk40t.core.node.elem_polyline import PolylineNode
 from meerk40t.core.node.elem_rect import RectNode
 from meerk40t.core.node.elem_text import TextNode
 from meerk40t.core.node.groupnode import GroupNode
@@ -325,3 +326,60 @@ class TestK40DesignAudit(unittest.TestCase):
                 self.assertEqual(valid.width, 2 * UNITS_PER_MM)
                 self.assertIs(malformed.width, width)
                 self.assertEqual(self.commands, [])
+
+    def test_ac_u09_3_nonfinite_vector_segments_are_limited_without_hiding_valid_checks(
+        self,
+    ) -> None:
+        for node_type in (PathNode, PolylineNode):
+            with self.subTest(node_type=node_type.__name__):
+                self.geometry.clear()
+                self.operations.clear()
+                malformed = []
+                for index in range(2):
+                    geometry = Geomstr()
+                    geometry.line(0j, complex(10, 10) * UNITS_PER_MM)
+                    geometry.line(
+                        complex(float("nan"), 5 * UNITS_PER_MM),
+                        complex(400, 5) * UNITS_PER_MM,
+                    )
+                    node = node_type(
+                        geometry=geometry,
+                        matrix=Matrix(),
+                        label=f"Malformed segment {index}",
+                        id=f"malformed-segment-{index}",
+                    )
+                    self.geometry.append(node)
+                    malformed.append(node)
+                for label in ("Valid outside alpha", "Valid outside beta"):
+                    self.rect(label, 299, 20, 2, 2)
+                self.cut("Malformed assignment").add_reference(malformed[0])
+                malformed[0].selected = True
+                malformed[0].emphasized = True
+                before = self.logical_state()
+                segments_before = [
+                    node.geometry.segments[: node.geometry.index].copy()
+                    for node in malformed
+                ]
+                window = self.make_window()
+                for refresh in (False, True):
+                    if refresh:
+                        window.panel.refresh_data()
+                    report = self.audit(window)
+                    self.assertRegex(report, r"design dimensions:\s*unavailable")
+                    self.assertRegex(report, r"design bounds:\s*unavailable")
+                    self.assertIn("limitations:", report)
+                    limitations = report.split("limitations:", 1)[1]
+                    for index in range(2):
+                        self.assertIn(f"malformed-segment-{index}", limitations)
+                    self.assertRegex(report, r"outside bed:\s*2\s*\(checked 2 of 4")
+                    self.assertIn("valid outside alpha", report)
+                    self.assertIn("valid outside beta", report)
+                    self.assert_count(report, "assigned", 1)
+                    self.assert_count(report, "unassigned", 3)
+                    self.assertRegex(report, r"exact duplicate vector groups:\s*1\b")
+                    self.assertEqual(self.logical_state(), before)
+                    for node, segments in zip(malformed, segments_before):
+                        assert_array_equal(
+                            node.geometry.segments[: node.geometry.index], segments
+                        )
+                    self.assertEqual(self.commands, [])
