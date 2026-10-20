@@ -161,6 +161,21 @@ saved by other open windows. Save or load errors appear in the window; a failed
 save retains the draft and previous records so you can correct permissions and
 retry. A corrupt file must be repaired or recovered from your backup before saving.
 
+Autosave writes dirty workspaces to `_autosave.svg` in the local application
+work directory, at the frequency set in Preferences → Autosave. Disabled autosave
+and clean workspaces do not write files. A complete SVG is staged before the
+normal recovery file is replaced atomically, so a failed save leaves the previous
+recovery file available at its normal path. Successful saves retain six prior
+versions (`.bak`, then `.ba1` through `.ba5`). Save, history, or publication errors
+appear in the console and status bar, keep the workspace dirty, and retry on the
+next scheduled run. Check disk space and folder permissions after an error.
+The existing startup crash-recovery prompt uses the normal autosave file.
+
+Read-only report timings on deterministic synthetic documents are recorded in
+[U10 report measurements](engineering/evidence/U10-report-profile.md). Reproduce
+them with `uv run --locked python engineering/profile_reports.py --elements 500 4000 --repeats 5`.
+No report optimization was introduced with these measurements.
+
 The wxMeerK40t is the GUI and is written in wxPython. We use AUI to allow to have a very highly configurable UI. We can easily add panes and tools and there are quite a few available already.
 
 See [ROADMAP.md](ROADMAP.md) for proposed improvements to this fork's macOS and

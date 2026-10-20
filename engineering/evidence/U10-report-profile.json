@@ -1,0 +1,86 @@
+{
+  "python": "3.13.14",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "repeats": 5,
+  "scope": "Report collection only; no GUI rendering, network or hardware.",
+  "documents": [
+    {
+      "elements": 500,
+      "operations": 40,
+      "references": 375,
+      "reports": {
+        "job_summary": {
+          "first_ms": 79.46,
+          "median_ms": 0.387,
+          "min_ms": 0.38,
+          "max_ms": 0.401,
+          "characters": 4341,
+          "sha256": "5cf81ec5f5560a38b9e095961d3c1062c6493d800a1599456d34ca27414f8d35"
+        },
+        "connection": {
+          "first_ms": 0.008,
+          "median_ms": 0.002,
+          "min_ms": 0.001,
+          "max_ms": 0.004,
+          "characters": 249,
+          "sha256": "0bece543ea920305226a13c364d57e9bce0b7a6dcea5647500b3199fffd6534b"
+        },
+        "preview": {
+          "first_ms": 372.529,
+          "median_ms": 43.602,
+          "min_ms": 43.487,
+          "max_ms": 43.764,
+          "characters": 159,
+          "sha256": "be5af4c3391279376d91ef6e2fa3b966faaf64209f68a69739eab3e6c6ee775f"
+        },
+        "audit": {
+          "first_ms": 19.763,
+          "median_ms": 19.178,
+          "min_ms": 19.155,
+          "max_ms": 19.202,
+          "characters": 38483,
+          "sha256": "0e5e411bff0590bee1ee6f2f009ff2c44479501811cecd050ed04f90f2ba948c"
+        }
+      }
+    },
+    {
+      "elements": 4000,
+      "operations": 40,
+      "references": 3000,
+      "reports": {
+        "job_summary": {
+          "first_ms": 629.94,
+          "median_ms": 2.724,
+          "min_ms": 2.683,
+          "max_ms": 3.84,
+          "characters": 4344,
+          "sha256": "d2a7ff06555ddf797264d202c60e9be2ce1e924d330eb85b6c944dccbdd59d03"
+        },
+        "connection": {
+          "first_ms": 0.007,
+          "median_ms": 0.002,
+          "min_ms": 0.002,
+          "max_ms": 0.003,
+          "characters": 249,
+          "sha256": "0bece543ea920305226a13c364d57e9bce0b7a6dcea5647500b3199fffd6534b"
+        },
+        "preview": {
+          "first_ms": 349.965,
+          "median_ms": 354.911,
+          "min_ms": 348.08,
+          "max_ms": 357.112,
+          "characters": 162,
+          "sha256": "b55164050411f7fed5df57c1cf233d3a87576cc9f406381cd8508c5d02fb40f5"
+        },
+        "audit": {
+          "first_ms": 156.259,
+          "median_ms": 154.954,
+          "min_ms": 154.505,
+          "max_ms": 158.103,
+          "characters": 297628,
+          "sha256": "f02c11397554ad4e10eede4007b229f07201173dddead81b6dbf340d3f89e5ff"
+        }
+      }
+    }
+  ]
+}

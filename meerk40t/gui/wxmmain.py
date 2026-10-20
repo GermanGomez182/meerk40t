@@ -1,10 +1,13 @@
 import datetime
 import os
 import platform
+import shutil
 import sys
 import threading
 from functools import partial
 from math import isinf
+from pathlib import Path as FilePath
+from tempfile import TemporaryDirectory
 
 import wx
 from PIL import Image
@@ -31,7 +34,13 @@ from meerk40t.gui.statusbarwidgets.shapepropwidget import (
 from meerk40t.gui.statusbarwidgets.statusbar import CustomStatusBar
 from meerk40t.gui.statusbarwidgets.strokewidget import ColorWidget, StrokeWidget
 from meerk40t.gui.wxutils import TextCtrl, wxButton, wxComboBox, wxStaticText
-from meerk40t.kernel import Job, get_safe_path, lookup_listener, signal_listener
+from meerk40t.kernel import (
+    Context,
+    Job,
+    get_safe_path,
+    lookup_listener,
+    signal_listener,
+)
 from meerk40t.main import APPLICATION_NAME
 
 from ..core.units import DEFAULT_PPI, UNITS_PER_INCH, UNITS_PER_PIXEL, Length
@@ -167,18 +176,13 @@ class GUIThread:
 
 
 class Autosaver:
-    """
-    Minimal autosave functionality.
-    Still missing:
-    - Delete autosave file on successful save (you could call it a feature too...)
-    - Make user aware of an autosaved file at startup
-    """
+    """Keep local recovery snapshots for the main window's startup recovery."""
 
-    def __init__(self, context, *args, **kwargs):
+    def __init__(self, context: Context, *args: object, **kwargs: object) -> None:
         self.context = context
         self.needs_saving = False
         safe_dir = self.context.kernel.os_information["WORKDIR"]
-        self.autosave_file = os.path.join(safe_dir, "_autosave.svg")
+        self.autosave_file = str(FilePath(safe_dir) / "_autosave.svg")
 
         choices = [
             {
@@ -225,52 +229,48 @@ class Autosaver:
         )
         self.context.schedule(self._job)
 
-    def autosave_workspace(self):
-        #  print (f"Job called: Active: {self.context.autosave_active}, requires saving: {self.needs_saving}")
-        if not self.context.autosave_active:
+    def autosave_workspace(self) -> None:
+        if not self.context.autosave_active or not self.needs_saving:
             return
-        if not self.needs_saving:
-            return
-        elements = self.context.elements
-        VERSIONS = 5
+        recovery = FilePath(self.autosave_file)
         try:
-            if os.path.exists(self.autosave_file):
-                base_name, base_ext = os.path.splitext(self.autosave_file)
-                for history in range(VERSIONS - 1, -1, -1):
-                    if history == 0:
-                        v0 = ".bak"
-                    else:
-                        v0 = f".ba{history}"
-                    v1 = f".ba{history + 1}"
-                    v0_file = base_name + v0
-                    v1_file = base_name + v1
-                    if os.path.exists(v0_file):
-                        if os.path.exists(v1_file):
-                            os.remove(v1_file)
-                        os.rename(v0_file, v1_file)
-
-                v1_file = base_name + ".bak"
-                os.rename(self.autosave_file, v1_file)
-            elements.save(self.autosave_file, temporary=True)
-        except (
-            PermissionError,
-            OSError,
-            RuntimeError,
-            FileExistsError,
-            FileNotFoundError,
-        ):
-            # print (f"Error happened: {e}")
-            pass
-
+            # The SVG saver selects its format by suffix; staging on the same
+            # filesystem also keeps final publication atomic.
+            with TemporaryDirectory(
+                prefix=".autosave-", dir=str(recovery.parent)
+            ) as directory:
+                replacement = FilePath(directory) / "replacement.svg"
+                if not self.context.elements.save(str(replacement), temporary=True):
+                    raise RuntimeError(_("The SVG writer did not save the workspace."))
+                if recovery.exists():
+                    self._rotate_history(recovery)
+                os.replace(str(replacement), str(recovery))
+        except (OSError, RuntimeError, ValueError) as error:
+            message = _(
+                "Autosave failed for {file}: {error}. Check available disk space "
+                "and folder permissions; autosave will retry."
+            ).format(file=self.autosave_file, error=error)
+            self.context.channel("console")(message)
+            self.context.signal("statusmsg", message)
+            return
         self.needs_saving = False
-        # print ("Saved...")
 
-    def set_saving_indicator(self, newvalue):
-        # print (f"Saving needed: {newvalue}")
+    def _rotate_history(self, recovery: FilePath) -> None:
+        for history in range(4, -1, -1):
+            source = recovery.with_suffix(
+                ".bak" if history == 0 else f".ba{history}"
+            )
+            destination = recovery.with_suffix(f".ba{history + 1}")
+            if source.exists():
+                os.replace(str(source), str(destination))
+        # Startup must still find the old snapshot at its normal path if either
+        # copying history or publishing the replacement fails.
+        shutil.copyfile(str(recovery), str(recovery.with_suffix(".bak")))
+
+    def set_saving_indicator(self, newvalue: bool) -> None:
         self.needs_saving = newvalue
 
-    def reset(self):
-        # print (f"rescheduling job")
+    def reset(self) -> None:
         self.context.unschedule(self._job)
         self._job.interval = self.context.autosave_interval
         self._job.reset()
