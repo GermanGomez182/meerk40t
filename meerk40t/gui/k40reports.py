@@ -269,6 +269,16 @@ def _validate_audit_shape(node: Node, translate: Callable[[str], str]) -> None:
             raise ValueError(
                 _("Invalid shape coordinate: {attribute}").format(attribute=attribute)
             )
+    if node.type in ("elem path", "elem polyline"):
+        geometry = node.geometry
+        for segment in geometry.segments[: geometry.index]:
+            flags = int(segment[2].real)
+            # Presence bits distinguish coordinates from valid NaN placeholders.
+            for mask, column in ((0b1000, 0), (0b0100, 1), (0b0010, 3), (0b0001, 4)):
+                if flags & mask:
+                    point = segment[column]
+                    if not isfinite(point.real) or not isfinite(point.imag):
+                        raise ValueError(_("Nonfinite vector segment coordinate"))
 
 
 def _audit_bounds(
