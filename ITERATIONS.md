@@ -16,7 +16,7 @@ verify command; no new bootstrap unit or verify-gate is needed.
 | U06 | Passive connection diagnosis | U05 | done |
 | U07 | Local material test notes | U06 | done |
 | U08 | Preview and framing context | U07 | done |
-| U09 | Read-only design/import audit | U08 | in-progress |
+| U09 | Read-only design/import audit | U08 | done |
 | U10 | Reliable autosave and measured reports | U09 | todo |
 
 ## Iteration log
@@ -105,6 +105,17 @@ Spec-to-units was skipped because this is a single-slice change; verify-gate was
 - Overrides: none.
 - Deferred: none. Next U09 is a read-only design/import audit, spec-only.
 - Verification: orchestration passed 633 core tests (44.342s), 90 combined GUI tests (1.947s), Ruff for Python 3.7, diff checks, and translation check (exit 0; English fallback, no locale edits). Independent review passed 633 core tests (44.252s) in round one, then 29 focused GUI tests (0.962s), Ruff, whitespace checks, and viewport probe (error moved to y=12 with no commands) in round two. Final post-review reruns passed 633 core tests (44.424s) and 29 focused GUI tests (1.025s).
+
+### U09 Read-only design/import audit — 2026-10-20
+
+- Shipped: AC-U09-1 reports transformed scene-space dimensions and out-of-bed elements with identifiers; tests: `test_ac_u09_1_dimensions_use_transformed_scene_bounds_in_mm`, `test_ac_u09_1_refresh_rechecks_current_geometry_and_references`, `test_ac_u09_1_outside_elements_include_negative_and_overflow_not_edges`, `test_ac_u09_1_missing_bed_keeps_assignment_check_available`.
+- Shipped: AC-U09-2 audits assignment through disabled operations and nested effects, unassigned identifiers, and exact native vector duplicates with equal current transforms independent of style; tests: `test_ac_u09_2_duplicate_segments_and_transform_ignore_style_not_bounds`, `test_ac_u09_2_similar_bounds_reversed_paths_and_other_matrices_are_not_duplicates`, `test_ac_u09_2_assignment_uses_all_operation_descendants_not_other_refs`, `test_ac_u09_2_open_refresh_preserves_document_geometry_undo_and_queue`.
+- Shipped: AC-U09-3 keeps supported checks usable with empty/unsupported text or image geometry and invalid bounds, preserving source arrays and references without automatic edits or hardware actions; tests: `test_ac_u09_3_empty_design_reports_limitation_and_zero_counts`, `test_ac_u09_3_unsupported_text_image_do_not_hide_supported_duplicates`, `test_ac_u09_3_invalid_bounds_keep_audit_summary_and_framing_usable`, `test_ac_u09_3_nonfinite_vector_segments_are_limited_without_hiding_valid_checks`.
+- Commits: test `0a847768a` → feat `445fd5e2d` → test `dac946711` → fix `fb1ae759a`.
+- Review: round 1 CHANGES_REQUIRED → round 2 PASS; 1 finding (1 fixed, 0 rejected, 0 deferred). Evidence: [U09 review](engineering/evidence/U09-review.md).
+- Overrides: none.
+- Deferred: no approximate, reversed-path, or alternate-matrix duplicate matching; equivalent geometry in other encodings is not flagged, per D7.
+- Verification: orchestration passed 633 core tests (49.265s), 102 combined GUI tests (3.014s), Ruff with Python 3.7 target, whitespace checks, and translation check (exit 0, English fallback, no locale edits). Independent review passed 633 core tests (58.967s) and 36 focused GUI tests (3.002s) in round one; round two passed 37 focused GUI tests (1.107s), 18 geometry probes, Ruff and whitespace checks. Final post-review reruns passed 633 core tests (47.352s) and 37 focused GUI tests (1.029s).
 
 ### U02 uv desktop setup — 2026-10-17
 

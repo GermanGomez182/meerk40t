@@ -1,10 +1,10 @@
 # Resume the Mac / K40 roadmap
 
-Current checkpoint: U08 completed and reviewed on 2026-10-19. The current
-branch is `fix/macos-workspace-readability`; U08 fix commit is `d34b181c9`,
-followed by the documentation record. Confirm the fork contains this complete
-checkpoint before starting U09. Final post-review verification passed 633 core
-tests (44.424s) and 29 focused GUI tests (1.025s).
+Current checkpoint: U09 completed and reviewed on 2026-10-20. The current
+branch is `fix/macos-workspace-readability`; U09 product head is `fb1ae759a`,
+followed by this documentation record. Final post-review reruns passed 633 core
+tests (47.352s) and 37 focused GUI tests (1.029s). Confirm the fork contains the
+complete checkpoint before starting U10.
 
 ## Working agreements
 
@@ -22,7 +22,7 @@ tests (44.424s) and 29 focused GUI tests (1.025s).
 ## Git and launch
 
 - Branch: `fix/macos-workspace-readability`.
-- U08 product head: `d34b181c9`, followed by its documentation record.
+- U09 product head: `fb1ae759a`, followed by this documentation record.
 - `origin` is upstream; `fork` is the user's GitHub fork.
 - Run: `uv sync --locked`, then `uv run meerk40t`.
 - Companion: **Tools → Tools → K40 Workspace**, or console
@@ -47,13 +47,13 @@ tests (44.424s) and 29 focused GUI tests (1.025s).
   error finding was fixed. Evidence: [U08 review](engineering/evidence/U08-review.md).
   Simulation opens only after free-plan preparation; framing access opens
   existing laser controls only.
+- U09 read-only design/import audit: complete; round 2 PASS, malformed vector
+  coordinate handling fixed with regression coverage. Evidence:
+  [U09 review](engineering/evidence/U09-review.md).
 
 ## Pending roadmap, in order
 
-1. **U09 read-only design/import audit**: spec only, no tests or implementation.
-   Dimensions, out-of-bed placement, unassigned elements, exact duplicate
-   vector geometry plus transform. No automatic modification or deletion.
-2. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
+1. **U10 autosave and measured reports**: draft `testgui/test_gui_autosave.py`,
    eight methods. Earlier red: five failing methods / seven subcases, three
    controls pass; re-run when this unit starts. Existing Autosaver loses dirty
    state and may corrupt the normal recovery path on failed saves. Stage a
@@ -63,6 +63,14 @@ tests (44.424s) and 29 focused GUI tests (1.025s).
 
 ## Verification already observed
 
+- U09 orchestration passed 633 core tests (49.265s), 102 combined GUI tests
+  (3.014s), Ruff with Python 3.7 target, whitespace checks, and translation
+  checking (exit 0; English fallback, no locale edits). Independent review
+  passed 633 core tests (58.967s) and 36 focused GUI tests (3.002s) in round
+  one; round two passed 37 focused GUI tests (1.107s), 18 geometry probes,
+  Ruff and whitespace checks. Final post-review reruns passed 633 core tests
+  (47.352s) and 37 focused GUI tests (1.029s). Evidence:
+  [U09 review](engineering/evidence/U09-review.md).
 - U08 orchestration passed 633 core tests (44.342s), 90 combined GUI tests
   (1.947s), Ruff with Python 3.7 target, whitespace checks, and translation
   checking with English fallback/no locale edits. Final post-review reruns
